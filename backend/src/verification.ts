@@ -126,77 +126,76 @@ const TRUSTED_DOMAINS = [
   "univision.com", "animalpolitico.com", "elpais.com", "emol.com", "lanacion.com.ar",
 ];
 
-const DECEASED_PERSONS: { tokens: string[]; deathYear: number }[] = [
-  // Música – internacional
-  { tokens: ["michael", "jackson"], deathYear: 2009 },
-  { tokens: ["elvis", "presley"], deathYear: 1977 },
-  { tokens: ["prince"], deathYear: 2016 },
-  { tokens: ["whitney", "houston"], deathYear: 2012 },
-  { tokens: ["amy", "winehouse"], deathYear: 2011 },
-  { tokens: ["david", "bowie"], deathYear: 2016 },
-  { tokens: ["freddie", "mercury"], deathYear: 1991 },
-  { tokens: ["john", "lennon"], deathYear: 1980 },
-  { tokens: ["kurt", "cobain"], deathYear: 1994 },
-  { tokens: ["bob", "marley"], deathYear: 1981 },
-  { tokens: ["jimi", "hendrix"], deathYear: 1970 },
-  { tokens: ["tupac"], deathYear: 1996 },
-  { tokens: ["ray", "charles"], deathYear: 2004 },
-  { tokens: ["james", "brown"], deathYear: 2006 },
-  { tokens: ["frank", "sinatra"], deathYear: 1998 },
-  { tokens: ["queen", "elizabeth"], deathYear: 2022 },
-  { tokens: ["aretha", "franklin"], deathYear: 2018 },
-  // Música – latina / iberoamericana
-  { tokens: ["juan", "gabriel"], deathYear: 2016 },
-  { tokens: ["selena"], deathYear: 1995 },
-  { tokens: ["carlos", "gardel"], deathYear: 1935 },
-  { tokens: ["mercedes", "sosa"], deathYear: 2009 },
-  { tokens: ["rocio", "durcal"], deathYear: 2006 },
-  { tokens: ["jose", "jose"], deathYear: 2019 },
-  { tokens: ["gustavo", "cerati"], deathYear: 2014 },
-  { tokens: ["luis", "alberto", "spinetta"], deathYear: 2012 },
-  { tokens: ["armando", "manzanero"], deathYear: 2020 },
-  // Deporte – mundial
-  { tokens: ["maradona"], deathYear: 2020 },
-  { tokens: ["pele"], deathYear: 2022 },
-  { tokens: ["kobe", "bryant"], deathYear: 2020 },
-  { tokens: ["johan", "cruyff"], deathYear: 2016 },
-  { tokens: ["senna"], deathYear: 1994 },
-  { tokens: ["muhammad", "ali"], deathYear: 2016 },
-  { tokens: ["kobe", "bryant"], deathYear: 2020 },
-  // Ciencia / tecnología
-  { tokens: ["steve", "jobs"], deathYear: 2011 },
-  { tokens: ["albert", "einstein"], deathYear: 1955 },
-  { tokens: ["stephen", "hawking"], deathYear: 2018 },
-  { tokens: ["nikola", "tesla"], deathYear: 1943 },
-  { tokens: ["marie", "curie"], deathYear: 1934 },
-  // Política / líderes
-  { tokens: ["nelson", "mandela"], deathYear: 2013 },
-  { tokens: ["fidel", "castro"], deathYear: 2016 },
-  { tokens: ["hugo", "chavez"], deathYear: 2013 },
-  { tokens: ["simon", "bolivar"], deathYear: 1830 },
-  { tokens: ["che", "guevara"], deathYear: 1967 },
-  { tokens: ["john", "kennedy"], deathYear: 1963 },
-  { tokens: ["mahatma", "gandhi"], deathYear: 1948 },
-  { tokens: ["martin", "luther", "king"], deathYear: 1968 },
-  { tokens: ["salvador", "allende"], deathYear: 1973 },
-  { tokens: ["mikhail", "gorbachev"], deathYear: 2022 },
-  // Religión
-  { tokens: ["papa", "juan", "pablo", "segundo"], deathYear: 2005 },
-  { tokens: ["madre", "teresa"], deathYear: 1997 },
-  // Actores / entretenimiento
-  { tokens: ["robin", "williams"], deathYear: 2014 },
-  { tokens: ["heath", "ledger"], deathYear: 2008 },
-  { tokens: ["paul", "walker"], deathYear: 2013 },
-  { tokens: ["chadwick", "boseman"], deathYear: 2020 },
-  { tokens: ["bruce", "lee"], deathYear: 1973 },
-  { tokens: ["marilyn", "monroe"], deathYear: 1962 },
-  // Literatura
-  { tokens: ["gabriel", "garcia", "marquez"], deathYear: 2014 },
-  { tokens: ["pablo", "neruda"], deathYear: 1973 },
-  { tokens: ["jorge", "luis", "borges"], deathYear: 1986 },
-  { tokens: ["mario", "vargas", "llosa"], deathYear: 2025 },
-  { tokens: ["frida", "kahlo"], deathYear: 1954 },
-];
+const WIKIPEDIA_CACHE = new Map<string, number | null>();
+
+async function queryWikipediaDeathYear(title: string): Promise<number | null> {
+  const cached = WIKIPEDIA_CACHE.get(title);
+  if (cached !== undefined) return cached;
+
+  try {
+    const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+    const res = await fetchWithTimeout(url, { headers: { "User-Agent": "Factify/1.0" } }, 4000);
+    if (!res.ok) { WIKIPEDIA_CACHE.set(title, null); return null; }
+
+    const data: any = await res.json();
+    if (data.type === "disambiguation") { WIKIPEDIA_CACHE.set(title, null); return null; }
+
+    const desc: string = data.description || "";
+    const match = desc.match(/\((\d{4})\s*[–-]\s*(\d{4})\)/);
+    if (match) {
+      const deathYear = parseInt(match[2], 10);
+      if (deathYear > 1500 && deathYear <= new Date().getFullYear()) {
+        WIKIPEDIA_CACHE.set(title, deathYear);
+        return deathYear;
+      }
+    }
+
+    const extract: string = data.extract || "";
+    const extractLine = extract.split("\n")[0];
+    const exMatch = extractLine.match(/[–-]\s*(\d{4})\)/);
+    if (exMatch) {
+      const deathYear = parseInt(exMatch[1], 10);
+      if (deathYear > 1500 && deathYear <= new Date().getFullYear()) {
+        WIKIPEDIA_CACHE.set(title, deathYear);
+        return deathYear;
+      }
+    }
+
+    WIKIPEDIA_CACHE.set(title, null);
+    return null;
+  } catch {
+    WIKIPEDIA_CACHE.set(title, null);
+    return null;
+  }
+}
+
+function extractPersonCandidates(text: string): string[] {
+  const words = text.split(/\s+/).filter((w) => w.length >= 3);
+  const candidates: string[] = [];
+  const seen = new Set<string>();
+
+  for (let i = 0; i < words.length - 1; i++) {
+    const a = normalizeText(words[i]);
+    const b = normalizeText(words[i + 1]);
+    if (a.length < 3 || b.length < 3) continue;
+    const formatted = `${capitalize(words[i])} ${capitalize(words[i + 1])}`;
+    if (!seen.has(formatted)) { seen.add(formatted); candidates.push(formatted); }
+  }
+
+  for (const w of words) {
+    const nw = normalizeText(w);
+    if (nw.length >= 4 && nw !== "2026" && nw !== "2025" && nw !== "2024") {
+      const formatted = capitalize(w);
+      if (!seen.has(formatted)) { seen.add(formatted); candidates.push(formatted); }
+    }
+  }
+
+  return candidates;
+}
+
+function capitalize(w: string): string {
+  return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+}
 
 const COMMERCIAL_PATTERNS = [
   "repair", "reparacion", "reparación", "screen replacement", "screen repair",
@@ -250,31 +249,28 @@ function isCommercialContent(source: VerifiedSource): boolean {
   return COMMERCIAL_PATTERNS.some((p) => hay.includes(normalizeText(p)));
 }
 
-function isImpossibleDeceasedClaim(text: string): { name: string; deathYear: number } | null {
+async function isImpossibleDeceasedClaim(text: string): Promise<{ name: string; deathYear: number } | null> {
   const normalized = normalizeText(text);
   const CURRENT_YEAR = new Date().getFullYear();
+
   const years: number[] = [];
   const yearMatches = normalized.match(/\b(1[0-9]{3}|20[0-9]{2})\b/g);
   if (yearMatches) for (const m of yearMatches) years.push(parseInt(m, 10));
-  // Future tense en texto ORIGINAL (con acentos) para evitar falsos positivos
-  // como "para", "aclaran", "asegura" que en texto normalizado son ambiguos.
   const hasFutureTense = /\b\w+r[á]n(?!\w)|\b\w+r[á](?!\w)/.test(text);
 
-  const COMMON_PERSON_TOKENS = new Set(["de", "el", "la", "los", "las", "san", "don", "doña", "jose", "juan", "papa", "maria", "madre", "segundo", "tercero"]);
-  for (const person of DECEASED_PERSONS) {
-    const normTokens = person.tokens.map((t) => normalizeText(t));
-    const matched = normTokens.filter((t) => {
-      if (t.length <= 3 && COMMON_PERSON_TOKENS.has(t)) return false;
-      return normalized.includes(t);
-    });
-    const required = Math.max(1, Math.ceil(normTokens.length / 2));
-    if (matched.length < required) continue;
+  const hasTimeMarker = years.some((y) => y >= CURRENT_YEAR - 1 && y <= CURRENT_YEAR + 10) || hasFutureTense;
+  if (!hasTimeMarker) return null;
 
-    if (years.some((y) => y > person.deathYear && y <= CURRENT_YEAR + 10)) {
-      return { name: person.tokens.join(" "), deathYear: person.deathYear };
+  const candidates = extractPersonCandidates(text);
+  for (const name of candidates) {
+    const deathYear = await queryWikipediaDeathYear(name);
+    if (deathYear === null) continue;
+
+    if (years.some((y) => y > deathYear && y <= CURRENT_YEAR + 10)) {
+      return { name, deathYear };
     }
     if (hasFutureTense) {
-      return { name: person.tokens.join(" "), deathYear: person.deathYear };
+      return { name, deathYear };
     }
   }
 
@@ -1126,7 +1122,7 @@ export async function runVerification(input: VerificationInput): Promise<Verific
     }
   }
 
-  const deceasedCheck = isImpossibleDeceasedClaim(text);
+  const deceasedCheck = await isImpossibleDeceasedClaim(text);
   if (deceasedCheck) {
     const yearsSince = new Date().getFullYear() - deceasedCheck.deathYear;
     classification = "falso";

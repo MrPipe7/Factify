@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CheckCircle, AlertTriangle, XCircle, RotateCcw, Share2, Info, ChevronDown, ChevronUp, ShieldCheck, ExternalLink, Globe } from "../../components/Icons";
 import { AnalysisResult, type VerifiedSource } from "../utils/analyzer";
 import { AlertModal } from "./AlertModal";
@@ -46,6 +46,7 @@ export function ResultPage({ result, onAnalyzeAgain }: ResultPageProps) {
   const [showAlert, setShowAlert] = useState(false);
   const [showFullText, setShowFullText] = useState(false);
   const [shareNotice, setShareNotice] = useState("");
+  const shareAreaRef = useRef<HTMLDivElement>(null);
 
   const config = classificationConfig[result.classification];
   const Icon = config.icon;
@@ -87,27 +88,65 @@ export function ResultPage({ result, onAnalyzeAgain }: ResultPageProps) {
     }
   };
 
-  const handleShare = () => {
+  const scrollToTop = () => {
+    topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const scrollToShareArea = () => {
+    shareAreaRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
+  const doTrackShare = () => {
     trackEvent({
       event_type: "share_intent",
       classification: result.classification,
       confidence: result.confidence,
     });
+  };
 
+  const handleShare = () => {
     if (shouldShowAlert) {
       setShowAlert(true);
+      scrollToShareArea();
     } else {
       if (navigator.share) {
         navigator.share({
           title: "Factify — Verificación de noticias",
           text: `Analicé esta noticia con Factify y fue clasificada como: ${config.label}`,
-        }).catch(() => {});
+        }).then(doTrackShare).catch(() => {});
       } else if (navigator.clipboard?.writeText) {
+        doTrackShare();
         navigator.clipboard
           .writeText(`Factify: contenido clasificado como ${config.label}.`)
-          .then(() => setShareNotice("Resultado copiado al portapapeles."))
+          .then(() => {
+            setShareNotice("Resultado copiado al portapapeles.");
+            scrollToShareArea();
+          })
           .catch(() => {});
       }
+    }
+  };
+
+  const handleDeclineShare = () => {
+    setShowAlert(false);
+    trackEvent({
+      event_type: "decline_share",
+      classification: result.classification,
+      confidence: result.confidence,
+    });
+  };
+
+  const handleContinueShare = () => {
+    setShowAlert(false);
+    doTrackShare();
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard
+        .writeText(`Factify: contenido clasificado como ${config.label}.`)
+        .then(() => {
+          setShareNotice("Resultado copiado al portapapeles.");
+          scrollToShareArea();
+        })
+        .catch(() => {});
     }
   };
 
@@ -123,8 +162,8 @@ export function ResultPage({ result, onAnalyzeAgain }: ResultPageProps) {
       {showAlert && (
         <AlertModal
           classification={result.classification}
-          onClose={() => setShowAlert(false)}
-          onContinue={() => setShowAlert(false)}
+          onClose={handleDeclineShare}
+          onContinue={handleContinueShare}
         />
       )}
 
@@ -388,7 +427,7 @@ export function ResultPage({ result, onAnalyzeAgain }: ResultPageProps) {
           </div>
 
           {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div ref={shareAreaRef} className="flex flex-col sm:flex-row gap-3">
             <button onClick={onAnalyzeAgain} className="btn-ghost flex-1 justify-center py-3">
               <RotateCcw className="w-4 h-4" />
               Analizar otro

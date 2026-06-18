@@ -46,10 +46,12 @@ export function DashboardPage() {
 
   const verifications = events.filter((e: AnalyticsEvent) => e.event_type === "verification_completed");
   const shares = events.filter((e: AnalyticsEvent) => e.event_type === "share_intent");
+  const declines = events.filter((e: AnalyticsEvent) => e.event_type === "decline_share");
 
   const byClassification = countBy(verifications, "classification");
   const totalVerifications = verifications.length;
   const totalShares = shares.length;
+  const totalDeclines = declines.length;
 
   const maxClass = Math.max(...Object.values(byClassification), 1);
 
@@ -105,9 +107,7 @@ export function DashboardPage() {
               </div>
               <div className="surface-panel p-5 rounded-xl">
                 <p className="text-gray-400 mb-1" style={{ fontSize: "0.75rem", fontWeight: 600 }}>NO COMPARTIÓ</p>
-                <p className="text-red-500" style={{ fontSize: "2rem", fontWeight: 700 }}>
-                  {totalVerifications > totalShares ? totalVerifications - totalShares : 0}
-                </p>
+                <p className="text-red-500" style={{ fontSize: "2rem", fontWeight: 700 }}>{totalDeclines}</p>
               </div>
             </div>
 
@@ -142,7 +142,7 @@ export function DashboardPage() {
               <h2 className="text-gray-800 mb-4" style={{ fontSize: "1rem", fontWeight: 600 }}>
                 Últimas preguntas realizadas
               </h2>
-              {events.length === 0 ? (
+              {verifications.length === 0 ? (
                 <p className="text-gray-400 text-center py-8" style={{ fontSize: "0.875rem" }}>
                   Aún no hay eventos registrados. Realiza verificaciones para ver estadísticas.
                 </p>
@@ -159,7 +159,7 @@ export function DashboardPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {events.slice(0, 50).map((ev: AnalyticsEvent) => {
+                      {verifications.slice(0, 50).map((ev: AnalyticsEvent) => {
                         const query = (ev.metadata as Record<string, unknown> | null)?.query as string | undefined;
                         return (
                         <tr key={ev.id} className="border-b border-gray-50 hover:bg-gray-50/50">

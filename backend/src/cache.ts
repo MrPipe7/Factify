@@ -7,7 +7,7 @@
  */
 
 import { createHash } from "node:crypto";
-import { normalizeText } from "../../shared/analyzer.ts";
+import { normalizeText } from "../../shared/analyzer.js";
 
 const DEFAULT_TTL_HOURS = 48;
 

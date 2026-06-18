@@ -5,10 +5,10 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { Classification } from "../../shared/analyzer.ts";
-import { repairUtf8Mojibake } from "../../shared/textEncoding.ts";
-import { ANALYSIS_STRATEGY, FACTIFY_PROTOTYPE_VERSION } from "../../shared/version.ts";
-import { runVerification, type VerificationPayload } from "./verification.ts";
+import type { Classification } from "../../shared/analyzer.js";
+import { repairUtf8Mojibake } from "../../shared/textEncoding.js";
+import { ANALYSIS_STRATEGY, FACTIFY_PROTOTYPE_VERSION } from "../../shared/version.js";
+import { runVerification, type VerificationPayload } from "./verification.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 

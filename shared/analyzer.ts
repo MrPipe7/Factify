@@ -1,6 +1,6 @@
-import { repairUtf8Mojibake } from "./textEncoding.ts";
+import { repairUtf8Mojibake } from "./textEncoding.js";
 
-export { repairUtf8Mojibake } from "./textEncoding.ts";
+export { repairUtf8Mojibake } from "./textEncoding.js";
 
 export type Classification = "confiable" | "dudoso" | "falso";
 

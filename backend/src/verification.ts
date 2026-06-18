@@ -24,10 +24,10 @@ import {
   type SourceStats,
   type VerificationEngine,
   type VerifiedSource,
-} from "../../shared/analyzer.ts";
-import { readVerificationCache, writeVerificationCache } from "./cache";
-import { FACTIFY_PROTOTYPE_VERSION } from "../../shared/version.ts";
-import { MIN_TEXT_LENGTH } from "../../shared/validateInput.ts";
+} from "../../shared/analyzer.js";
+import { readVerificationCache, writeVerificationCache } from "./cache.js";
+import { FACTIFY_PROTOTYPE_VERSION } from "../../shared/version.js";
+import { MIN_TEXT_LENGTH } from "../../shared/validateInput.js";
 
 export type { SourceStats };
 

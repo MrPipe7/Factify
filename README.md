@@ -27,9 +27,7 @@
 - [Sistema de clasificación](#sistema-de-clasificación)
 - [APIs externas](#apis-externas)
 - [Evaluación](#evaluación)
-- [Roadmap](#roadmap)
 - [Equipo](#equipo)
-- [Licencia](#licencia)
 
 ---
 

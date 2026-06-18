@@ -62,7 +62,8 @@ El sistema incluye además un dashboard de estadísticas con métricas de uso, a
 - Soporte para texto, URLs y transcripciones de video.
 
 ### Técnicas
-- Motor NLP basado en reglas (sin modelos preentrenados).
+- Motor NLP basado en reglas.
+- Modelo pre-entrenado `nlptown/bert-base-multilingual-uncased-sentiment` (Hugging Face) como señal complementaria de sentimiento.
 - Coincidencia difusa de afirmaciones entre fuentes.
 - Caché en Supabase para evitar consultas repetidas.
 - Arquitectura serverless en Vercel.
@@ -274,44 +275,6 @@ El evaluador también reporta:
 
 ---
 
-## Roadmap
-
-### Entregado (2026 Q1-Q2)
-
-- ✅ Motor de verificación con NLP heurístico
-- ✅ Integración con Google Fact Check Tools, Tavily y Wikipedia
-- ✅ Detección de personas fallecidas y claims imposibles
-- ✅ Sistema de postura (respalda / contradice) por fuente
-- ✅ Veredicto ponderado con porcentaje de confianza
-- ✅ Dashboard de estadísticas con métricas de uso
-- ✅ Alertas preventivas antes de compartir
-- ✅ Modo oscuro
-- ✅ Evaluación reproducible con 30 casos
-- ✅ Arquitectura serverless en Vercel
-- ✅ Integración de modelo pre-entrenado vía Hugging Face
-
-### Corto plazo
-
-- Feedback de usuario (¿fue útil? / ¿entendiste el resultado?)
-- Exportar resultado como imagen / PDF
-- Soporte para compartir en redes sociales
-- Más ejemplos interactivos en la página principal
-
-### Mediano plazo
-
-- Soporte multilingüe (inglés, portugués)
-- Plugin para navegador (Chrome / Firefox)
-- Historial sincronizado entre dispositivos (vía Supabase)
-
-### Largo plazo
-
-- API pública para terceros
-- Análisis de imágenes y videos
-- Colaboración con fact-checkers profesionales
-- Aplicación móvil (React Native)
-
----
-
 ## Equipo
 
 <table>
@@ -323,13 +286,5 @@ El evaluador también reporta:
     </td>
   </tr>
 </table>
-
----
-
-## Licencia
-
-MIT © 2026 Felipe Figueroa — Universidad Andrés Bello.
-
----
 
 Proyecto académico Universidad Andrés Bello.

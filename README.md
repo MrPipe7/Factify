@@ -221,7 +221,7 @@ Configura las variables de entorno en Vercel Dashboard → Settings → Environm
 |----------|------------|-------------|
 | `GOOGLE_FACTCHECK_API_KEY` | ✅ Sí | API Key de Google Fact Check Tools |
 | `TAVILY_API_KEY` | ✅ Sí | API Key de Tavily Search |
-| `HF_API_TOKEN` | ❌ No | Token de Hugging Face (modelo `nlptown/bert-base-multilingual-uncased-sentiment`) |
+| `HF_API_TOKEN` | ❌ No | Token de Hugging Face (modelo pre-entrenado `nlptown/bert-base-multilingual-uncased-sentiment`) |
 | `SUPABASE_URL` | ⚠️ No* | URL del proyecto Supabase |
 | `SUPABASE_SERVICE_KEY` | ⚠️ No* | Service role key de Supabase |
 | `FACTIFY_ADMIN_KEY` | ❌ No | Clave para panel `/admin/evaluation` |
@@ -254,7 +254,7 @@ Configura las variables de entorno en Vercel Dashboard → Settings → Environm
 | **Google Fact Check** | Buscar verificaciones previas de fact-checkers | 100 queries/día (plan gratuito) |
 | **Tavily Search** | Buscar fuentes web relevantes | 1000 queries/mes (plan gratuito) |
 | **Wikipedia** (español) | Consultar conocimiento general y detectar personas fallecidas | Sin límite (API pública) |
-| **Hugging Face** | Modelo `nlptown/bert-base-multilingual-uncased-sentiment` para análisis de sentimiento en español | ~30k caracteres/mes (plan gratuito) |
+| **Hugging Face** | Modelo pre-entrenado `nlptown/bert-base-multilingual-uncased-sentiment` para análisis de sentimiento como señal complementaria | ~30k caracteres/mes (plan gratuito) |
 
 ---
 

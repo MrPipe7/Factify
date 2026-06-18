@@ -5,7 +5,7 @@
  *   1. Google Fact Check Tools API  -> ¿la afirmación ya fue verificada por profesionales?
  *   2. Tavily Search API            -> recupera fuentes/evidencia reales y actuales.
  *   3. Wikipedia API (español)      -> conocimiento general y detección de personas fallecidas.
- *   4. Hugging Face Inference API   -> modelo nlptown/bert-base-multilingual-uncased-sentiment (señal de sentimiento).
+ *   4. Hugging Face Inference API   -> modelo pre-entrenado de sentimiento (señal complementaria).
  *
  * Si no hay claves configuradas (o todo falla) se devuelve únicamente el
  * análisis heurístico local, de modo que la app siempre funciona.

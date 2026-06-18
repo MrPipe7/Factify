@@ -8,7 +8,6 @@
 ![Google Fact Check](https://img.shields.io/badge/Google-Fact%20Check-4285F4?logo=google&logoColor=white)
 ![Tavily](https://img.shields.io/badge/Tavily-Search-FF6F00?logo=react&logoColor=white)
 ![Wikipedia](https://img.shields.io/badge/Wikipedia-API-000000?logo=wikipedia&logoColor=white)
-![Estado](https://img.shields.io/badge/Estado-Producci%C3%B3n-brightgreen)
 
 **Factify** es una plataforma web que analiza contenido noticioso y lo clasifica como **confiable**, **dudoso** o **falso**, combinando reglas lingüísticas con consultas a fuentes externas para emitir un veredicto basado en evidencia real.
 
@@ -28,9 +27,7 @@
 - [Sistema de clasificación](#sistema-de-clasificación)
 - [APIs externas](#apis-externas)
 - [Evaluación](#evaluación)
-- [Roadmap](#roadmap)
 - [Equipo](#equipo)
-- [Licencia](#licencia)
 
 ---
 
@@ -277,44 +274,6 @@ El evaluador también reporta:
 
 ---
 
-## Roadmap
-
-### Entregado (2026 Q1-Q2)
-
-- ✅ Motor de verificación con NLP heurístico
-- ✅ Integración con Google Fact Check Tools, Tavily y Wikipedia
-- ✅ Detección de personas fallecidas y claims imposibles
-- ✅ Sistema de postura (respalda / contradice) por fuente
-- ✅ Veredicto ponderado con porcentaje de confianza
-- ✅ Dashboard de estadísticas con métricas de uso
-- ✅ Alertas preventivas antes de compartir
-- ✅ Modo oscuro
-- ✅ Evaluación reproducible con 30 casos
-- ✅ Arquitectura serverless en Vercel
-- ✅ Integración de modelo preentrenado vía Hugging Face
-
-### Corto plazo
-
-- Feedback de usuario (¿fue útil? / ¿entendiste el resultado?)
-- Exportar resultado como imagen / PDF
-- Soporte para compartir en redes sociales
-- Más ejemplos interactivos en la página principal
-
-### Mediano plazo
-
-- Soporte multilingüe (inglés, portugués)
-- Plugin para navegador (Chrome / Firefox)
-- Historial sincronizado entre dispositivos (vía Supabase)
-
-### Largo plazo
-
-- API pública para terceros
-- Análisis de imágenes y videos
-- Colaboración con fact-checkers profesionales
-- Aplicación móvil (React Native)
-
----
-
 ## Equipo
 
 <table>
@@ -329,8 +288,4 @@ El evaluador también reporta:
 
 ---
 
-## Licencia
-
-MIT © 2026 — Proyecto académico Universidad Andrés Bello.
-
-Distribuido bajo licencia MIT. Ver archivo `LICENSE` para más información.
+Proyecto académico Universidad Andrés Bello.

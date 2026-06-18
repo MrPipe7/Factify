@@ -2,6 +2,7 @@ import { useState } from "react";
 import { CheckCircle, AlertTriangle, XCircle, RotateCcw, Share2, Info, ChevronDown, ChevronUp, ShieldCheck, ExternalLink, Globe } from "../../components/Icons";
 import { AnalysisResult, type VerifiedSource } from "../utils/analyzer";
 import { AlertModal } from "./AlertModal";
+import { trackEvent } from "../utils/analyticsClient";
 
 interface ResultPageProps {
   result: AnalysisResult;
@@ -87,6 +88,12 @@ export function ResultPage({ result, onAnalyzeAgain }: ResultPageProps) {
   };
 
   const handleShare = () => {
+    trackEvent({
+      event_type: "share_intent",
+      classification: result.classification,
+      confidence: result.confidence,
+    });
+
     if (shouldShowAlert) {
       setShowAlert(true);
     } else {

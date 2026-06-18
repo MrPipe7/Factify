@@ -1,7 +1,7 @@
 import { Shield, Menu, X, Moon, Sun } from "../../components/Icons";
 import { useState } from "react";
 
-type Page = "home" | "history" | "tips" | "about";
+type Page = "home" | "history" | "tips" | "about" | "dashboard";
 type ThemeMode = "light" | "dark";
 
 interface NavbarProps {
@@ -18,6 +18,7 @@ export function Navbar({ currentPage, onNavigate, theme, onToggleTheme }: Navbar
     { id: "home", label: "Inicio" },
     { id: "history", label: "Historial" },
     { id: "tips", label: "Consejos" },
+    { id: "dashboard", label: "Estadísticas" },
     { id: "about", label: "Acerca de" },
   ];
 

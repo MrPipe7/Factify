@@ -54,6 +54,33 @@ function verifyApiDevServer(mode: string) {
         }
       });
 
+      server.middlewares.use("/api/analytics", async (req: any, res: any) => {
+        const respond = (status: number, data: unknown) => {
+          res.statusCode = status;
+          res.setHeader("Content-Type", "application/json");
+          res.end(JSON.stringify(data));
+        };
+
+        try {
+          const { recordEvent, queryAnalytics } = await server.ssrLoadModule(
+            path.resolve(rootDir, "backend/src/analytics.ts") + `?v=${Date.now()}`,
+          );
+
+          if (req.method === "POST") {
+            const body = await readJsonBody(req);
+            const result = await recordEvent(body);
+            respond(result.ok ? 201 : 500, result);
+          } else if (req.method === "GET") {
+            const result = await queryAnalytics();
+            respond(result.error ? 500 : 200, result);
+          } else {
+            respond(405, { error: "Method not allowed" });
+          }
+        } catch (error: any) {
+          respond(500, { error: error?.message ?? "analytics_failed" });
+        }
+      });
+
       server.middlewares.use("/api/evaluation", async (req: any, res: any) => {
         if (req.method !== "GET") {
           res.statusCode = 405;

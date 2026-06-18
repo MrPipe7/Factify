@@ -6,9 +6,10 @@ import { TipsPage } from "./components/TipsPage";
 import { HistoryPage } from "./components/HistoryPage";
 import { AboutPage } from "./components/AboutPage";
 import { AdminEvaluationPage } from "./components/AdminEvaluationPage";
+import { DashboardPage } from "./components/DashboardPage";
 import { AnalysisResult } from "./utils/analyzer";
 
-type Page = "home" | "result" | "history" | "tips" | "about";
+type Page = "home" | "result" | "history" | "tips" | "about" | "dashboard";
 type ThemeMode = "light" | "dark";
 
 const HISTORY_STORAGE_KEY = "factify.history.v1";
@@ -86,7 +87,7 @@ export default function App() {
     setCurrentPage("home");
   };
 
-  const handleNavigate = (page: "home" | "history" | "tips" | "about") => {
+  const handleNavigate = (page: "home" | "history" | "tips" | "about" | "dashboard") => {
     if (page === "home") {
       setCurrentResult(null);
     }
@@ -142,6 +143,7 @@ export default function App() {
         )}
         {currentPage === "tips" && <TipsPage />}
         {currentPage === "about" && <AboutPage />}
+        {currentPage === "dashboard" && <DashboardPage />}
         </div>
       </main>
 

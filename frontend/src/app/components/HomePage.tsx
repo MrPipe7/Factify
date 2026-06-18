@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { Search, Shield, CheckCircle, AlertTriangle, XCircle, ArrowRight, Link, FileText, Video } from "../../components/Icons";
 import { AnalysisResult } from "../utils/analyzer";
 import { verifyContent } from "../utils/verifyClient";
+import { trackEvent } from "../utils/analyticsClient";
 import { WelcomeSection } from "./WelcomeSection";
 
 interface HomePageProps {
@@ -53,6 +54,13 @@ export function HomePage({ onResult, onNavigateTips }: HomePageProps) {
       .then((result) => {
         setLoading(false);
         onResult({ ...result, inputKind: inputType });
+        trackEvent({
+          event_type: "verification_completed",
+          classification: result.classification,
+          confidence: result.confidence,
+          input_kind: inputType,
+          metadata: { query: trimmedInput.slice(0, 300) },
+        });
       })
       .catch(() => {
         setLoading(false);

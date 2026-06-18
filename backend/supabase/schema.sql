@@ -14,3 +14,21 @@ create index if not exists verification_cache_expires_idx
 
 -- Solo el service role (backend) debe escribir/leer.
 alter table public.verification_cache enable row level security;
+
+-- Tabla de analytics: eventos anónimos para el dashboard de estadísticas.
+create table if not exists public.analytics_events (
+  id bigint primary key generated always as identity,
+  event_type text not null,
+  classification text,
+  confidence integer,
+  input_kind text,
+  metadata jsonb default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists analytics_events_type_idx
+  on public.analytics_events (event_type);
+create index if not exists analytics_events_created_idx
+  on public.analytics_events (created_at);
+
+alter table public.analytics_events enable row level security;

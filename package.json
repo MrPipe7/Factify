@@ -9,8 +9,6 @@
     "build": "cd frontend && npm install && npm run build",
     "install:frontend": "npm install --prefix frontend",
     "clean": "node --input-type=module -e \"import fs from 'node:fs'; fs.rmSync('frontend/node_modules',{recursive:true,force:true});\"",
-    "test:prototype": "node scripts/test-prototype.mjs",
-    "test:requirements": "node scripts/test-requirements.mjs",
     "test:evaluation": "npx tsx scripts/run-evaluation.mjs"
   },
   "devDependencies": {

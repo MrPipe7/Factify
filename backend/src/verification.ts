@@ -76,6 +76,8 @@ async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutM
   }
 }
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 /** Recorta el texto a una consulta corta y representativa (titular / primeras frases). */
 function toQuery(text: string): string {
   const clean = text.replace(/\s+/g, " ").trim();
@@ -474,7 +476,7 @@ async function queryFactCheck(text: string, debug: string[]): Promise<FactCheckM
           url: review.url,
           snippet: rating ? `Calificación: ${rating}` : claim.text,
           publisher: review.publisher?.name,
-          stance: classification === "falso" ? "contradict" : classification === "confiable" ? "support" : "neutral",
+          stance: "neutral",
         },
       };
 
@@ -518,6 +520,56 @@ async function queryTavily(text: string): Promise<VerifiedSource[]> {
       title: r.title || r.url,
       url: r.url,
       snippet: typeof r.content === "string" ? r.content.slice(0, 280) : undefined,
+      stance: "neutral" as const,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+async function queryWikipedia(text: string): Promise<VerifiedSource[]> {
+  try {
+    const words = significantWords(text);
+    const keywords = [...words]
+      .filter((w) => !GENERIC_FACTCHECK_WORDS.has(w) && !ANCHOR_FILLER_WORDS.has(w) && w.length >= 4)
+      .slice(0, 4)
+      .join(" ");
+    if (!keywords) return [];
+
+    const searchUrl =
+      `https://es.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(keywords)}&format=json&srlimit=2`;
+    const searchRes = await fetchWithTimeout(searchUrl, { headers: { "User-Agent": "Factify/1.0" } }, 5000);
+    if (!searchRes.ok) return [];
+    const ct = searchRes.headers.get("content-type") || "";
+    if (!ct.includes("json")) return [];
+
+    const searchData: any = await searchRes.json();
+    const results: any[] = searchData?.query?.search || [];
+    if (!results.length) return [];
+
+    await sleep(500);
+
+    const summaries = await Promise.all(
+      results.slice(0, 2).map(async (r: any) => {
+        try {
+          const url = `https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(r.title)}`;
+          const sRes = await fetchWithTimeout(url, { headers: { "User-Agent": "Factify/1.0" } }, 4000);
+          if (!sRes.ok) return null;
+          const sCt = sRes.headers.get("content-type") || "";
+          if (!sCt.includes("json")) return null;
+          const sData: any = await sRes.json();
+          if (sData.type === "disambiguation") return null;
+          return sData;
+        } catch {
+          return null;
+        }
+      }),
+    );
+
+    return summaries.filter(Boolean).map((s: any) => ({
+      title: s.title || "Wikipedia",
+      url: `https://es.wikipedia.org/wiki/${encodeURIComponent(s.title ?? "")}`,
+      snippet: (s.description || s.extract?.split("\n")[0] || "").slice(0, 280) || undefined,
       stance: "neutral" as const,
     }));
   } catch {
@@ -670,8 +722,13 @@ function sourceRefutesClaim(userText: string, source: VerifiedSource): boolean {
   const ratingSnippet = source.snippet ?? "";
   if (ratingSnippet.includes("Calificación:") || ratingSnippet.includes("Rating:")) {
     const rating = normalizeText(ratingSnippet);
-    if (rating.includes("falso") || rating.includes("false") || rating.includes("fake")) return true;
+    if (rating.includes("falso") || rating.includes("false") || rating.includes("fake")) {
+      const fcText = `${source.title}`;
+      const fcRelevance = claimRelevance(userText, fcText);
+      if (fcRelevance >= 0.70) return true;
+    }
     if (rating.includes("verdadero") || rating.includes("true")) return false;
+    return false;
   }
 
   if (!DEBUNK_TERMS.some((t) => hay.includes(normalizeText(t)))) return false;
@@ -848,9 +905,16 @@ function computeVerdictFromSources(
 
   let classification: Classification;
 
-  if (factCheck?.classification === "falso" && !factCheck.source.lowRelevance) {
+  if (
+    factCheck?.classification === "falso" &&
+    factCheck.relevance >= MIN_SOURCE_RELEVANCE &&
+    (contradictN > 0 || usableSupport.length < 2)
+  ) {
     classification = "falso";
-  } else if (newsContradict.length >= 1 && newsContradict[0].relevance >= 0.55 && contradictWeight >= supportWeight * 0.85) {
+  }
+
+  if (classification === undefined) {
+    if (newsContradict.length >= 1 && newsContradict[0].relevance >= 0.55 && contradictWeight >= supportWeight * 0.85) {
     classification = "falso";
   } else if (usableContradict.length >= 2 && usableContradict[0].relevance >= 0.52 && usableContradict[1].relevance >= 0.52 && contradictRatio >= 0.55) {
     classification = "falso";
@@ -882,6 +946,7 @@ function computeVerdictFromSources(
     classification = "falso";
   } else {
     classification = "dudoso";
+  }
   }
 
   const activeCount = supportN + contradictN;
@@ -1057,14 +1122,17 @@ export async function runVerification(input: VerificationInput): Promise<Verific
 
   let factCheck: FactCheckMatch | null = null;
   let tavilySources: VerifiedSource[] = [];
+  let wikiSources: VerifiedSource[] = [];
 
   if (!input.skipExternal) {
-    [factCheck, tavilySources] = await Promise.all([
+    [factCheck, tavilySources, wikiSources] = await Promise.all([
       queryFactCheck(text, debug),
       queryTavily(text),
+      queryWikipedia(text),
     ]);
     if (factCheck) providers.push("factcheck");
     if (tavilySources.length) providers.push("tavily");
+    if (wikiSources.length) providers.push("wikipedia");
   } else {
     debug.push("evaluación: skipExternal activo (solo análisis local)");
   }
@@ -1072,6 +1140,7 @@ export async function runVerification(input: VerificationInput): Promise<Verific
   const sources: VerifiedSource[] = [];
   if (factCheck) sources.push(factCheck.source);
   sources.push(...tavilySources);
+  sources.push(...wikiSources);
 
   const evidence = analyzeEvidenceSources(sources, text);
   const sourceVerdict = input.skipExternal

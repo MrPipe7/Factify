@@ -9,7 +9,6 @@
 ![Tavily](https://img.shields.io/badge/Tavily-Search-FF6F00?logo=react&logoColor=white)
 ![Wikipedia](https://img.shields.io/badge/Wikipedia-API-000000?logo=wikipedia&logoColor=white)
 ![Estado](https://img.shields.io/badge/Estado-Producci%C3%B3n-brightgreen)
-![Licencia](https://img.shields.io/badge/Licencia-MIT-yellow)
 
 **Factify** es una plataforma web que analiza contenido noticioso y lo clasifica como **confiable**, **dudoso** o **falso**, combinando reglas lingüísticas con consultas a fuentes externas para emitir un veredicto basado en evidencia real.
 
@@ -306,8 +305,6 @@ El evaluador también reporta:
   </tr>
 </table>
 
-## Licencia
-
-MIT © 2026 — Proyecto académico Universidad Andrés Bello.
+Proyecto académico Universidad Andrés Bello.
 
 Distribuido bajo licencia MIT. Ver archivo `LICENSE` para más información.

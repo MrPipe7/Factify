@@ -33,9 +33,13 @@ export function HomePage({ onResult, onNavigateTips }: HomePageProps) {
       setError("Por favor, ingresa una noticia o enlace para analizar.");
       return;
     }
-    if (inputType === "url" && !/^https?:\/\//i.test(trimmedInput) && !/^www\./i.test(trimmedInput)) {
-      setError("Ingresa un enlace valido (por ejemplo: https://sitio.com/noticia).");
-      return;
+    if (inputType === "url") {
+      let url = trimmedInput;
+      if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+      try { new URL(url); } catch {
+        setError("Ingresa un enlace valido (por ejemplo: https://sitio.com/noticia).");
+        return;
+      }
     }
     if (inputType !== "url" && trimmedInput.length < 20) {
       setError("El texto debe contener al menos 20 caracteres.");

@@ -79,10 +79,6 @@ export function CheckCircle(props: IconProps) {
   );
 }
 
-export function CheckCircle2(props: IconProps) {
-  return <CheckCircle {...props} />;
-}
-
 export function ChevronDown(props: IconProps) {
   return (
     <Icon {...props}>

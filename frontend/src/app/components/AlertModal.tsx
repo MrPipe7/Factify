@@ -24,7 +24,7 @@ export function AlertModal({ classification, onClose, onContinue }: AlertModalPr
       />
 
       {/* Modal */}
-      <div className="relative surface-panel surface-panel-accent rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in-0 zoom-in-95 duration-200">
+      <div className="relative surface-panel surface-panel-accent rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-modal">
         <div
           className="h-0.5"
           style={{ background: isFalse ? "#dc2626" : "#d97706" }}

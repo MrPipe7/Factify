@@ -3,16 +3,16 @@
 ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)
-![Vercel](https://img.shields.io/badge/Vercel-Serverless-000000?logo=vercel&logoColor=white)
-![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3FCF8E?logo=supabase&logoColor=white)
-![Google Fact Check](https://img.shields.io/badge/Google_Fact_Check-API-4285F4?logo=google&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-Deploy-000000?logo=vercel&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?logo=supabase&logoColor=white)
+![Google Fact Check](https://img.shields.io/badge/Google-Fact%20Check-4285F4?logo=google&logoColor=white)
 ![Tavily](https://img.shields.io/badge/Tavily-Search-FF6F00?logo=react&logoColor=white)
 ![Wikipedia](https://img.shields.io/badge/Wikipedia-API-000000?logo=wikipedia&logoColor=white)
 ![Estado](https://img.shields.io/badge/Estado-Producci%C3%B3n-brightgreen)
 
 **Factify** es una plataforma web que analiza contenido noticioso y lo clasifica como **confiable**, **dudoso** o **falso**, combinando reglas lingüísticas con consultas a fuentes externas para emitir un veredicto basado en evidencia real.
 
-> 🎓 Proyecto académico — Universidad Andrés Bello, Facultad de Ingeniería, Escuela de Ingeniería en Computación e Informática, Viña del Mar, 2026.
+🎓 Proyecto académico — Universidad Andrés Bello, Facultad de Ingeniería, Escuela de Ingeniería en Computación e Informática, Viña del Mar, 2026.
 
 ---
 
@@ -32,6 +32,8 @@
 - [Equipo](#equipo)
 - [Licencia](#licencia)
 
+---
+
 ## Descripción general
 
 Factify permite al usuario pegar una noticia, un titular o un enlace, y obtener en segundos una clasificación respaldada por:
@@ -41,12 +43,13 @@ Factify permite al usuario pegar una noticia, un titular o un enlace, y obtener 
 - **Detección de postura**: cada fuente es analizada para determinar si respalda o contradice la afirmación.
 - **Veredicto ponderado**: combinación de todas las evidencias para emitir un resultado con porcentaje de confianza.
 
-El sistema incluye además un **dashboard de estadísticas** con métricas de uso, alertas preventivas antes de compartir contenido sensible, y un **historial local** en el navegador.
+El sistema incluye además un dashboard de estadísticas con métricas de uso, alertas preventivas antes de compartir contenido sensible, y un historial local en el navegador.
+
+---
 
 ## Funcionalidades clave
 
 ### Análisis y verificación
-
 - Clasificación en tres niveles: **confiable**, **dudoso**, **falso**.
 - Porcentaje de confianza basado en la solidez de la evidencia.
 - Explicación educativa del resultado.
@@ -54,7 +57,6 @@ El sistema incluye además un **dashboard de estadísticas** con métricas de us
 - Detección de personas fallecidas para identificar claims imposibles (ej. año futuro).
 
 ### Experiencia de usuario
-
 - Interfaz moderna con modo oscuro y claro.
 - Alertas preventivas antes de compartir contenido sensible.
 - Historial persistente en el navegador.
@@ -63,17 +65,18 @@ El sistema incluye además un **dashboard de estadísticas** con métricas de us
 - Soporte para texto, URLs y transcripciones de video.
 
 ### Técnicas
-
-- Motor **NLP basado en reglas** (sin modelos preentrenados).
+- Motor NLP basado en reglas (sin modelos preentrenados).
 - Coincidencia difusa de afirmaciones entre fuentes.
-- Cache en Supabase para evitar consultas repetidas.
+- Caché en Supabase para evitar consultas repetidas.
 - Arquitectura serverless en Vercel.
 - Componentes React con sistema de diseño propio.
+
+---
 
 ## Stack tecnológico
 
 | Área | Tecnología |
-|------|------------|
+|------|-----------|
 | **Frontend** | React 18, TypeScript, Vite 6 |
 | **UI/UX** | CSS design system propio (`design.css` + `variables.css`) |
 | **Backend** | TypeScript serverless (Vercel Functions) |
@@ -81,6 +84,8 @@ El sistema incluye además un **dashboard de estadísticas** con métricas de us
 | **APIs externas** | Google Fact Check Tools, Tavily Search, Wikipedia API |
 | **Despliegue** | Vercel (Frontend + Functions) |
 | **Iconos** | SVG inline (sistema propio) |
+
+---
 
 ## Arquitectura
 
@@ -114,6 +119,8 @@ El sistema incluye además un **dashboard de estadísticas** con métricas de us
                     │  analytics_events                 │
                     └───────────────────────────────────┘
 ```
+
+---
 
 ## Estructura del repositorio
 
@@ -163,10 +170,11 @@ Factifyy/
 └── README.md
 ```
 
+---
+
 ## Inicio rápido
 
 ### Requisitos
-
 - Node.js 18+
 - npm 9+
 
@@ -188,7 +196,7 @@ npm run install:frontend
 npm run dev
 ```
 
-Abre [http://localhost:5173](http://localhost:5173).
+Abre **http://localhost:5173**.
 
 ### Despliegue en Vercel
 
@@ -201,14 +209,16 @@ Configura las variables de entorno en Vercel Dashboard → Settings → Environm
 
 ### Base de datos (Supabase)
 
-1. Ve a [Supabase Dashboard](https://supabase.com) → SQL Editor
+1. Ve a [Supabase Dashboard](https://supabase.com/dashboard) → SQL Editor
 2. Pega y ejecuta el contenido de `backend/supabase/schema.sql`
-3. Copia `Project URL` y `service_role key` desde Project Settings → API
+3. Copia **Project URL** y **service_role key** desde Project Settings → API
+
+---
 
 ## Variables de entorno
 
 | Variable | ¿Requerida? | Descripción |
-|----------|-------------|-------------|
+|----------|------------|-------------|
 | `GOOGLE_FACTCHECK_API_KEY` | ✅ Sí | API Key de Google Fact Check Tools |
 | `TAVILY_API_KEY` | ✅ Sí | API Key de Tavily Search |
 | `HF_API_TOKEN` | ❌ No | Token de Hugging Face (modelo `nlptown/bert-base-multilingual-uncased-sentiment`) |
@@ -217,22 +227,25 @@ Configura las variables de entorno en Vercel Dashboard → Settings → Environm
 | `FACTIFY_ADMIN_KEY` | ❌ No | Clave para panel `/admin/evaluation` |
 | `CACHE_TTL_HOURS` | ❌ No | TTL de caché en Supabase (default: 48h) |
 
-*\* Requeridas solo si usas caché o analíticas.*
+* Requeridas solo si usas caché o analíticas.
+
+---
 
 ## Sistema de clasificación
 
 | Resultado | ¿Cuándo ocurre? |
-|-----------|-----------------|
-| **🟢 Confiable** | Evidencia externa respalda la afirmación + señales textuales bajas |
-| **🟡 Dudoso** | Sin evidencia externa concluyente + señales medias/altas |
-| **🔴 Falso** | Evidencia externa contradice la afirmación, o señales muy altas + imposibilidad factual |
+|-----------|----------------|
+| 🟢 **Confiable** | Evidencia externa respalda la afirmación + señales textuales bajas |
+| 🟡 **Dudoso** | Sin evidencia externa concluyente + señales medias/altas |
+| 🔴 **Falso** | Evidencia externa contradice la afirmación, o señales muy altas + imposibilidad factual |
 
 ### Escala de confianza
-
 - **86–100%**: Múltiples fuentes coinciden (todas respaldan o todas contradicen)
 - **70–85%**: Fuentes con alto consenso
 - **50–69%**: Evidencia mixta o parcial
 - **< 50%**: Análisis principalmente heurístico (pocas fuentes externas)
+
+---
 
 ## APIs externas
 
@@ -243,6 +256,8 @@ Configura las variables de entorno en Vercel Dashboard → Settings → Environm
 | **Wikipedia** (español) | Consultar conocimiento general y detectar personas fallecidas | Sin límite (API pública) |
 | **Hugging Face** | Modelo `nlptown/bert-base-multilingual-uncased-sentiment` para análisis de sentimiento en español | ~30k caracteres/mes (plan gratuito) |
 
+---
+
 ## Evaluación
 
 El proyecto incluye un evaluador con **30 casos reales** que mide la precisión del motor:
@@ -251,13 +266,16 @@ El proyecto incluye un evaluador con **30 casos reales** que mide la precisión 
 npm run test:evaluation
 ```
 
-**Resultado esperado: 100% de precisión** en las 3 categorías de clasificación.
+Resultado esperado: **100%** de precisión en las 3 categorías de clasificación.
 
 El evaluador también reporta:
+
 - Matriz de confusión
 - Tasa de falsos positivos y falsos negativos
 - Tiempo promedio de respuesta
 - Resultado por cada caso individual
+
+---
 
 ## Roadmap
 
@@ -295,17 +313,21 @@ El evaluador también reporta:
 - Colaboración con fact-checkers profesionales
 - Aplicación móvil (React Native)
 
+---
+
 ## Equipo
 
 <table>
   <tr>
-    <td align="center" width="20%">
-      <strong>Felipe Figueroa</strong><br>
-      <sub>Desarrollador Full-Stack</sub><br>
-      <sub>UNAB Viña del Mar</sub>
+    <td align="center">
+      <strong>Felipe Figueroa</strong><br />
+      Desarrollador Full-Stack<br />
+      UNAB Viña del Mar
     </td>
   </tr>
 </table>
+
+---
 
 ## Licencia
 

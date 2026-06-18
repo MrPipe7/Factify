@@ -38,7 +38,7 @@ Factifyy/
 
 ```env
 FACTIFY_PROTOTYPE_VERSION=0.2.0
-FACTIFY_ADMIN_KEY=PipeAdmin
+FACTIFY_ADMIN_KEY=
 GOOGLE_FACTCHECK_API_KEY=
 TAVILY_API_KEY=
 SUPABASE_URL=
@@ -55,29 +55,6 @@ npm run dev
 
 Abre http://localhost:5173
 
-## Panel tecnico oculto (presentacion / informe)
-
-No aparece en el menu publico.
-
-1. Navega a **http://localhost:5173/admin/evaluation**
-2. Clave configurada con `FACTIFY_ADMIN_KEY` (por defecto en desarrollo: `PipeAdmin`)
-3. Pulsa **Ejecutar evaluacion** para procesar los 30 casos
-
-## Evaluacion de 30 casos (API)
-
-```bash
-curl "http://localhost:5173/api/evaluation?key=PipeAdmin"
-```
-
-Devuelve exactitud, falsos positivos/negativos, matriz de confusion y detalle por caso.
-
-## Pruebas
-
-```bash
-npm run test:prototype      # Casos funcionales del motor
-npm run test:requirements   # RF01–RF09 y reglas de clasificacion
-```
-
 ## Validacion de entradas (POST /api/verify)
 
 - Minimo **20 caracteres**, maximo **10.000**
@@ -92,7 +69,3 @@ npm run test:requirements   # RF01–RF09 y reglas de clasificacion
 | Señales medias o altas sin evidencia externa | Dudoso |
 | Evidencia externa que refuta | Falso |
 | Evidencia externa que respalda | Confiable |
-
-La respuesta incluye `analysisOrigin` (origen del resultado) para la interfaz.
-
- por función; si falla, usa plan Pro o ejecuta evaluación local con `npm run test:evaluation`.

@@ -224,6 +224,33 @@ export function ResultPage({ result, onAnalyzeAgain }: ResultPageProps) {
             )}
           </div>
 
+          {/* Providers used */}
+          {result.providers && result.providers.length > 0 && (
+            <div className="surface-panel p-4 mb-5">
+              <p className="text-gray-500 dark:text-gray-400 mb-2" style={{ fontSize: "0.78rem", fontWeight: 600 }}>
+                APIs consultadas
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {result.providers.map((p: string) => (
+                  <span
+                    key={p}
+                    className="px-2.5 py-1 rounded-full text-xs font-medium border"
+                    style={{
+                      background: p === "huggingface" ? "#f0f0ff" : "#f5f5f5",
+                      borderColor: p === "huggingface" ? "#c8c8ff" : "#e0e0e0",
+                      color: p === "huggingface" ? "#5555cc" : "#555",
+                    }}
+                  >
+                    {p === "factcheck" ? "Google Fact Check" :
+                     p === "tavily" ? "Tavily Search" :
+                     p === "wikipedia" ? "Wikipedia" :
+                     p === "huggingface" ? "Hugging Face 🤖" : p}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Signals detected */}
           {result.signals.length > 0 && (
             <div className="surface-panel p-5 mb-5">

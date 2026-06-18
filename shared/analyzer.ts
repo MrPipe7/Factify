@@ -56,6 +56,8 @@ export interface AnalysisResult {
   sourceStats?: SourceStats;
   /** true si el resultado proviene de caché Supabase. */
   fromCache?: boolean;
+  /** APIs externas consultadas para este resultado. */
+  providers?: string[];
 }
 
 export interface Signal {

@@ -5,7 +5,7 @@
  *   1. Google Fact Check Tools API  -> ¿la afirmación ya fue verificada por profesionales?
  *   2. Tavily Search API            -> recupera fuentes/evidencia reales y actuales.
  *   3. Wikipedia API (español)      -> conocimiento general y detección de personas fallecidas.
- *   4. Hugging Face Inference API   -> modelo Narrativaai/fake-news-detection-spanish.
+ *   4. Hugging Face Inference API   -> modelo nlptown/bert-base-multilingual-uncased-sentiment (señal de sentimiento).
  *
  * Si no hay claves configuradas (o todo falla) se devuelve únicamente el
  * análisis heurístico local, de modo que la app siempre funciona.
@@ -27,6 +27,7 @@ import {
   type VerificationEngine,
   type VerifiedSource,
 } from "../../shared/analyzer.js";
+import { HfInference } from "@huggingface/inference";
 import { readVerificationCache, writeVerificationCache } from "./cache.js";
 import { FACTIFY_PROTOTYPE_VERSION } from "../../shared/version.js";
 import { MIN_TEXT_LENGTH } from "../../shared/validateInput.js";
@@ -499,45 +500,35 @@ async function queryFactCheck(text: string, debug: string[]): Promise<FactCheckM
   }
 }
 
-const HF_MODEL = "Narrativaai/fake-news-detection-spanish";
+const HF_MODEL = "nlptown/bert-base-multilingual-uncased-sentiment";
 
 async function queryHuggingFace(text: string): Promise<VerifiedSource[]> {
   const key = env("HF_API_TOKEN");
   if (!key) return [];
 
   try {
-    const res = await fetchWithTimeout(
-      `https://api-inference.huggingface.co/models/${HF_MODEL}`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${key}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ inputs: text.slice(0, 1024) }),
-      },
-      8000,
-    );
-    if (!res.ok) return [];
+    const hf = new HfInference(key);
+    const result = await hf.textClassification({
+      model: HF_MODEL,
+      inputs: text.slice(0, 512),
+    });
+    if (!result?.length) return [];
 
-    const data: any = await res.json();
-    const scores: { label: string; score: number }[] = Array.isArray(data) ? data[0] : data;
-    if (!scores?.length) return [];
-
-    const fakeScore = scores.find((s) => s.label === "FAKE")?.score ?? 0;
-    const realScore = scores.find((s) => s.label === "REAL")?.score ?? 0;
-    const maxScore = Math.max(fakeScore, realScore);
-    if (maxScore < 0.5) return [];
+    const stars = result.find((r: any) => /^\d+ star/.test(r.label));
+    const starScore = stars?.score ?? 0;
+    const starLabel = stars?.label ?? "3 stars";
+    const starNum = parseInt(starLabel, 10);
+    if (starScore < 0.4) return [];
 
     let stance: "support" | "contradict" | "neutral" = "neutral";
-    if (fakeScore > 0.7) stance = "contradict";
-    else if (realScore > 0.7) stance = "support";
+    if (starNum <= 2 && starScore > 0.5) stance = "contradict";
+    else if (starNum >= 4 && starScore > 0.7) stance = "support";
 
     return [
       {
-        title: `Modelo: ${HF_MODEL.split("/").pop()}`,
+        title: `Análisis de sentimiento (${starLabel})`,
         url: `https://huggingface.co/${HF_MODEL}`,
-        snippet: `FAKE: ${(fakeScore * 100).toFixed(0)}% | REAL: ${(realScore * 100).toFixed(0)}%`,
+        snippet: `Confianza: ${(starScore * 100).toFixed(0)}%`,
         publisher: "Hugging Face Inference API",
         stance,
       },

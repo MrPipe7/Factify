@@ -169,6 +169,13 @@ async function queryWikipediaDeathYear(title: string): Promise<number | null> {
   }
 }
 
+const COMMON_WORDS = new Set([
+  "este", "esta", "para", "como", "sobre", "entre", "donde", "cuando", "porque",
+  "tiene", "hasta", "desde", "todos", "nueva", "nuevo", "parte", "mundo", "final",
+  "noticia", "texto", "contenido", "fecha", "lugar", "año", "ano", "dia", "día",
+  "hora", "zona", "area", "tipo", "forma", "sera", "sido", "nunca", "siempre",
+]);
+
 function extractPersonCandidates(text: string): string[] {
   const words = text.split(/\s+/).filter((w) => w.length >= 3);
   const candidates: string[] = [];
@@ -177,20 +184,20 @@ function extractPersonCandidates(text: string): string[] {
   for (let i = 0; i < words.length - 1; i++) {
     const a = normalizeText(words[i]);
     const b = normalizeText(words[i + 1]);
-    if (a.length < 3 || b.length < 3) continue;
+    if (a.length < 3 || b.length < 3 || COMMON_WORDS.has(a) || COMMON_WORDS.has(b)) continue;
+    if (/^\d+$/.test(words[i]) || /^\d+$/.test(words[i + 1])) continue;
     const formatted = `${capitalize(words[i])} ${capitalize(words[i + 1])}`;
     if (!seen.has(formatted)) { seen.add(formatted); candidates.push(formatted); }
   }
 
   for (const w of words) {
     const nw = normalizeText(w);
-    if (nw.length >= 4 && nw !== "2026" && nw !== "2025" && nw !== "2024") {
-      const formatted = capitalize(w);
-      if (!seen.has(formatted)) { seen.add(formatted); candidates.push(formatted); }
-    }
+    if (nw.length < 4 || COMMON_WORDS.has(nw) || /^\d+$/.test(nw)) continue;
+    const formatted = capitalize(w);
+    if (!seen.has(formatted)) { seen.add(formatted); candidates.push(formatted); }
   }
 
-  return candidates;
+  return candidates.slice(0, 6);
 }
 
 function capitalize(w: string): string {
@@ -262,7 +269,9 @@ async function isImpossibleDeceasedClaim(text: string): Promise<{ name: string; 
   if (!hasTimeMarker) return null;
 
   const candidates = extractPersonCandidates(text);
+  let queries = 0;
   for (const name of candidates) {
+    if (++queries > 3) break;
     const deathYear = await queryWikipediaDeathYear(name);
     if (deathYear === null) continue;
 

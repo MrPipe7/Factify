@@ -28,7 +28,7 @@ export async function recordEvent(event: {
         classification: event.classification ?? null,
         confidence: event.confidence ?? null,
         input_kind: event.input_kind ?? null,
-        metadata: event.metadata ?? {},
+        metadata: event.metadata ? { query: String(event.metadata.query ?? "").slice(0, 200) } : {},
       }),
     });
     return { ok: res.ok };

@@ -36,6 +36,9 @@ export function DashboardPage() {
       } else {
         setEvents(res.events as unknown as AnalyticsEvent[]);
       }
+    }).catch((e: unknown) => {
+      setLoading(false);
+      setError(e instanceof Error ? e.message : "Error al cargar estadísticas");
     });
   };
 
@@ -91,14 +94,20 @@ export function DashboardPage() {
 
         {!loading && !error && (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
               <div className="surface-panel p-5 rounded-xl">
                 <p className="text-gray-400 mb-1" style={{ fontSize: "0.75rem", fontWeight: 600 }}>VERIFICACIONES</p>
                 <p className="text-gray-900" style={{ fontSize: "2rem", fontWeight: 700 }}>{totalVerifications}</p>
               </div>
               <div className="surface-panel p-5 rounded-xl">
-                <p className="text-gray-400 mb-1" style={{ fontSize: "0.75rem", fontWeight: 600 }}>VECES COMPARTIDO</p>
+                <p className="text-gray-400 mb-1" style={{ fontSize: "0.75rem", fontWeight: 600 }}>COMPARTIDO</p>
                 <p className="text-gray-900" style={{ fontSize: "2rem", fontWeight: 700 }}>{totalShares}</p>
+              </div>
+              <div className="surface-panel p-5 rounded-xl">
+                <p className="text-gray-400 mb-1" style={{ fontSize: "0.75rem", fontWeight: 600 }}>TASA DE COMPARTICIÓN</p>
+                <p className="text-gray-900" style={{ fontSize: "2rem", fontWeight: 700 }}>
+                  {totalVerifications > 0 ? `${Math.round((totalShares / totalVerifications) * 100)}%` : "—"}
+                </p>
               </div>
             </div>
 

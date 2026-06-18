@@ -2,12 +2,13 @@
   "name": "factify",
   "private": true,
   "version": "0.2.0",
+  "type": "module",
   "description": "Prototipo de verificación de noticias — React + Vite frontend, backend serverless TypeScript",
   "scripts": {
     "dev": "npm run dev --prefix frontend",
     "build": "cd frontend && npm install && npm run build",
     "install:frontend": "npm install --prefix frontend",
-    "clean": "node -e \"require('fs').rmSync('frontend/node_modules',{recursive:true,force:true})\"",
+    "clean": "node --input-type=module -e \"import fs from 'node:fs'; fs.rmSync('frontend/node_modules',{recursive:true,force:true});\"",
     "test:prototype": "node scripts/test-prototype.mjs",
     "test:requirements": "node scripts/test-requirements.mjs",
     "test:evaluation": "npx tsx scripts/run-evaluation.mjs"

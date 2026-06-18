@@ -94,14 +94,20 @@ export function DashboardPage() {
 
         {!loading && !error && (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8">
               <div className="surface-panel p-5 rounded-xl">
                 <p className="text-gray-400 mb-1" style={{ fontSize: "0.75rem", fontWeight: 600 }}>VERIFICACIONES</p>
                 <p className="text-gray-900" style={{ fontSize: "2rem", fontWeight: 700 }}>{totalVerifications}</p>
               </div>
               <div className="surface-panel p-5 rounded-xl">
-                <p className="text-gray-400 mb-1" style={{ fontSize: "0.75rem", fontWeight: 600 }}>COMPARTIDO</p>
-                <p className="text-gray-900" style={{ fontSize: "2rem", fontWeight: 700 }}>{totalShares}</p>
+                <p className="text-gray-400 mb-1" style={{ fontSize: "0.75rem", fontWeight: 600 }}>COMPARTIÓ</p>
+                <p className="text-green-600" style={{ fontSize: "2rem", fontWeight: 700 }}>{totalShares}</p>
+              </div>
+              <div className="surface-panel p-5 rounded-xl">
+                <p className="text-gray-400 mb-1" style={{ fontSize: "0.75rem", fontWeight: 600 }}>NO COMPARTIÓ</p>
+                <p className="text-red-500" style={{ fontSize: "2rem", fontWeight: 700 }}>
+                  {totalVerifications > totalShares ? totalVerifications - totalShares : 0}
+                </p>
               </div>
               <div className="surface-panel p-5 rounded-xl">
                 <p className="text-gray-400 mb-1" style={{ fontSize: "0.75rem", fontWeight: 600 }}>TASA DE COMPARTICIÓN</p>
@@ -164,7 +170,7 @@ export function DashboardPage() {
                         return (
                         <tr key={ev.id} className="border-b border-gray-50 hover:bg-gray-50/50">
                           <td className="py-2 pr-4 text-gray-700 max-w-xs truncate">
-                            {query ? query.slice(0, 60) : <span className="text-gray-300">—</span>}
+                            {query ? (query.length > 60 ? query.slice(0, 57) + "..." : query) : <span className="text-gray-300">—</span>}
                           </td>
                           <td className="py-2 pr-4 text-gray-600">{ev.input_kind === "text" ? "texto" : ev.input_kind ?? "—"}</td>
                           <td className="py-2 pr-4">

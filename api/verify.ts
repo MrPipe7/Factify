@@ -2,8 +2,8 @@
  * Función serverless de verificación (compatible con Vercel).
  */
 
-import { runVerification } from "../backend/src/verification.ts";
-import { validateVerifyBody } from "../shared/validateInput.ts";
+import { runVerification } from "../backend/src/verification";
+import { validateVerifyBody } from "../shared/validateInput";
 
 export default async function handler(req: any, res: any) {
   if (req.method !== "POST") {

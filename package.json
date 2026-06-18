@@ -11,5 +11,9 @@
     "test:prototype": "node scripts/test-prototype.mjs",
     "test:requirements": "node scripts/test-requirements.mjs",
     "test:evaluation": "npx tsx scripts/run-evaluation.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
   }
 }

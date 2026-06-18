@@ -2,6 +2,8 @@ import { repairUtf8Mojibake } from "./textEncoding.ts";
 
 export { repairUtf8Mojibake } from "./textEncoding.ts";
 
+export type Classification = "confiable" | "dudoso" | "falso";
+
 export type VerificationEngine = "local" | "factcheck";
 
 /** Origen del veredicto mostrado al usuario. */

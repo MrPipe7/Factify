@@ -2,7 +2,7 @@
  * GET /api/evaluation — evaluación reproducible de 30 casos (panel técnico).
  */
 
-import { runEvaluationReport } from "../backend/src/evaluation.ts";
+import { runEvaluationReport } from "../backend/src/evaluation";
 
 function env(name: string): string | undefined {
   const value = process.env[name];

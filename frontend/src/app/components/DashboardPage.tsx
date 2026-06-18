@@ -164,7 +164,7 @@ export function DashboardPage() {
                         return (
                         <tr key={ev.id} className="border-b border-gray-50 hover:bg-gray-50/50">
                           <td className="py-2 pr-4 text-gray-700 max-w-xs truncate">
-                            {query ?? <span className="text-gray-300">—</span>}
+                            {query ? query.slice(0, 60) : <span className="text-gray-300">—</span>}
                           </td>
                           <td className="py-2 pr-4 text-gray-600">{ev.input_kind === "text" ? "texto" : ev.input_kind ?? "—"}</td>
                           <td className="py-2 pr-4">

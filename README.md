@@ -1,71 +1,313 @@
-# Factify - Prototipo de verificacion de noticias (v0.2.0)
+# 🛡️ Factify — Verificación de noticias con IA
 
-Factify analiza contenido noticioso y lo clasifica como `confiable`, `dudoso` o `falso`. Combina un **baseline de NLP basado en reglas lingüísticas y señales textuales**, complementado por consultas a verificadores o fuentes externas cuando están disponibles.
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-Serverless-000000?logo=vercel&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3FCF8E?logo=supabase&logoColor=white)
+![Google Fact Check](https://img.shields.io/badge/Google_Fact_Check-API-4285F4?logo=google&logoColor=white)
+![Tavily](https://img.shields.io/badge/Tavily-Search-FF6F00?logo=react&logoColor=white)
+![Wikipedia](https://img.shields.io/badge/Wikipedia-API-000000?logo=wikipedia&logoColor=white)
+![Estado](https://img.shields.io/badge/Estado-Producci%C3%B3n-brightgreen)
+![Licencia](https://img.shields.io/badge/Licencia-MIT-yellow)
 
-> El prototipo **no determina la verdad absoluta**. El análisis local identifica señales de riesgo; la clasificación **falsa** requiere evidencia externa suficiente. La evaluación con 30 casos sirve para medir el desempeño inicial. En futuras versiones puede incorporarse un modelo preentrenado (BERT, DistilBERT, RoBERTa).
+**Factify** es una plataforma web que analiza contenido noticioso y lo clasifica como **confiable**, **dudoso** o **falso**, combinando reglas lingüísticas con consultas a fuentes externas para emitir un veredicto basado en evidencia real.
 
-## Tecnologias
+> 🎓 Proyecto académico — Universidad Andrés Bello, Facultad de Ingeniería, Escuela de Ingeniería en Computación e Informática, Viña del Mar, 2026.
 
-| Capa | Stack |
-|------|--------|
-| **Frontend** | React 18, TypeScript, Vite 6, CSS design system |
+---
+
+## 📑 Tabla de contenidos
+
+- [Descripción general](#descripción-general)
+- [Funcionalidades clave](#funcionalidades-clave)
+- [Stack tecnológico](#stack-tecnológico)
+- [Arquitectura](#arquitectura)
+- [Estructura del repositorio](#estructura-del-repositorio)
+- [Inicio rápido](#inicio-rápido)
+- [Variables de entorno](#variables-de-entorno)
+- [Sistema de clasificación](#sistema-de-clasificación)
+- [APIs externas](#apis-externas)
+- [Evaluación](#evaluación)
+- [Roadmap](#roadmap)
+- [Equipo](#equipo)
+- [Licencia](#licencia)
+
+## Descripción general
+
+Factify permite al usuario pegar una noticia, un titular o un enlace, y obtener en segundos una clasificación respaldada por:
+
+- **Análisis heurístico local**: detección de señales de desinformación como mayúsculas excesivas, lenguaje alarmista, clickbait, falta de fuentes, etc.
+- **Verificación externa**: consulta simultánea a Google Fact Check Tools, Tavily Search y Wikipedia en español.
+- **Detección de postura**: cada fuente es analizada para determinar si respalda o contradice la afirmación.
+- **Veredicto ponderado**: combinación de todas las evidencias para emitir un resultado con porcentaje de confianza.
+
+El sistema incluye además un **dashboard de estadísticas** con métricas de uso, alertas preventivas antes de compartir contenido sensible, y un **historial local** en el navegador.
+
+## Funcionalidades clave
+
+### Análisis y verificación
+
+- Clasificación en tres niveles: **confiable**, **dudoso**, **falso**.
+- Porcentaje de confianza basado en la solidez de la evidencia.
+- Explicación educativa del resultado.
+- Consulta simultánea a múltiples fuentes externas.
+- Detección de personas fallecidas para identificar claims imposibles (ej. año futuro).
+
+### Experiencia de usuario
+
+- Interfaz moderna con modo oscuro y claro.
+- Alertas preventivas antes de compartir contenido sensible.
+- Historial persistente en el navegador.
+- Ejemplos predefinidos para explorar la herramienta.
+- Dashboard de estadísticas con métricas de uso.
+- Soporte para texto, URLs y transcripciones de video.
+
+### Técnicas
+
+- Motor **NLP basado en reglas** (sin modelos preentrenados).
+- Coincidencia difusa de afirmaciones entre fuentes.
+- Cache en Supabase para evitar consultas repetidas.
+- Arquitectura serverless en Vercel.
+- Componentes React con sistema de diseño propio.
+
+## Stack tecnológico
+
+| Área | Tecnología |
+|------|------------|
+| **Frontend** | React 18, TypeScript, Vite 6 |
+| **UI/UX** | CSS design system propio (`design.css` + `variables.css`) |
 | **Backend** | TypeScript serverless (Vercel Functions) |
-| **Datos** | Supabase PostgreSQL (cache opcional) |
-| **APIs externas** | Google Fact Check Tools API, Tavily Search API |
-| **Logica compartida** | `shared/analyzer.ts`, `shared/validateInput.ts` |
+| **Base de datos** | Supabase PostgreSQL (caché + analíticas) |
+| **APIs externas** | Google Fact Check Tools, Tavily Search, Wikipedia API |
+| **Despliegue** | Vercel (Frontend + Functions) |
+| **Iconos** | SVG inline (sistema propio) |
 
-## Estructura
+## Arquitectura
+
+```
+                    ┌──────────────────────────────────┐
+                    │        Frontend (React)          │
+                    │  HomePage → ResultPage → Alert   │
+                    │  DashboardPage → HistoryPage     │
+                    └──────────┬───────────────────────┘
+                               │
+                    ┌──────────▼───────────────────────┐
+                    │      Vercel Functions (API)       │
+                    │                                   │
+                    │  POST /api/verify                 │
+                    │  GET  /api/analytics              │
+                    │  POST /api/analytics              │
+                    │  GET  /api/evaluation             │
+                    └──────────┬───────────────────────┘
+                               │
+              ┌────────────────┼─────────────────┐
+              ▼                ▼                  ▼
+    ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
+    │ Google       │  │ Tavily       │  │ Wikipedia    │
+    │ Fact Check   │  │ Search       │  │ (español)    │
+    └──────────────┘  └──────────────┘  └──────────────┘
+                               │
+                    ┌──────────▼───────────────────────┐
+                    │         Supabase (PostgreSQL)     │
+                    │                                   │
+                    │  verification_cache (TTL 48h)     │
+                    │  analytics_events                 │
+                    └───────────────────────────────────┘
+```
+
+## Estructura del repositorio
 
 ```
 Factifyy/
-├── data/
-│   ├── evaluation_news.json   # 30 casos para evaluación técnica
-│   └── demo_examples.json     # Ejemplos rápidos del frontend
+├── api/                            # Serverless functions (Vercel)
+│   ├── verify.ts                   #   POST /api/verify
+│   ├── evaluation.ts               #   GET  /api/evaluation
+│   └── analytics.ts                #   POST/GET /api/analytics
+│
+├── backend/
+│   ├── src/
+│   │   ├── verification.ts         # Motor principal (1267 líneas)
+│   │   ├── analytics.ts            # Registro y consulta de eventos
+│   │   ├── evaluation.ts           # Evaluador de 30 casos
+│   │   └── cache.ts                # Caché Supabase
+│   └── supabase/
+│       └── schema.sql              # Tablas verification_cache + analytics_events
+│
 ├── frontend/
-├── backend/src/
-│   ├── verification.ts
-│   └── evaluation.ts
-├── shared/
-├── api/
-│   ├── verify.ts
-│   └── evaluation.ts
-└── scripts/
-    ├── test-prototype.mjs
-    └── test-requirements.mjs
+│   └── src/
+│       ├── app/
+│       │   ├── components/         # 10 componentes React
+│       │   ├── utils/              # 3 utilidades (verify, analytics, analyzer)
+│       │   └── App.tsx             # Punto de entrada con routing
+│       ├── components/
+│       │   └── Icons.tsx           # 30 iconos SVG
+│       └── styles/
+│           ├── design.css          # Sistema de diseño
+│           ├── variables.css       # Variables CSS
+│           └── app.css             # Tailwind generado
+│
+├── shared/                         # Lógica compartida frontend/backend
+│   ├── analyzer.ts                 # NLP heurístico
+│   ├── validateInput.ts            # Validación de entrada
+│   └── textEncoding.ts             # Reparación UTF-8
+│
+├── data/
+│   ├── evaluation_news.json        # 30 casos de evaluación
+│   └── demo_examples.json          # Ejemplos rápidos
+│
+├── scripts/
+│   └── run-evaluation.mjs          # Evaluador de precisión
+│
+├── .env                            # Variables de entorno (no commiteado)
+├── vercel.json                     # Configuración de despliegue
+└── README.md
 ```
 
-## Variables de entorno (.env en la raiz)
+## Inicio rápido
 
-```env
-FACTIFY_PROTOTYPE_VERSION=0.2.0
-FACTIFY_ADMIN_KEY=
-GOOGLE_FACTCHECK_API_KEY=
-TAVILY_API_KEY=
-SUPABASE_URL=
-SUPABASE_SERVICE_KEY=
-CACHE_TTL_HOURS=48
-```
+### Requisitos
 
-## Ejecucion local
+- Node.js 18+
+- npm 9+
+
+### Instalación y ejecución local
 
 ```bash
+# Clonar
+git clone https://github.com/MrPipe7/Factify.git
+cd Factify
+
+# Dependencias
+npm install
 npm run install:frontend
+
+# Crear archivo .env con las variables necesarias
+# (ver sección Variables de entorno)
+
+# Iniciar servidor de desarrollo
 npm run dev
 ```
 
-Abre http://localhost:5173
+Abre [http://localhost:5173](http://localhost:5173).
 
-## Validacion de entradas (POST /api/verify)
+### Despliegue en Vercel
 
-- Minimo **20 caracteres**, maximo **10.000**
-- Campo `text` obligatorio (string)
-- Errores HTTP **400** / **413** con mensaje JSON `{ "error": "..." }`
+```bash
+npm i -g vercel
+vercel --prod
+```
 
-## Clasificacion responsable
+Configura las variables de entorno en Vercel Dashboard → Settings → Environment Variables.
 
-| Situacion | Resultado |
-|-----------|-----------|
-| Solo señales textuales, pocas alertas | Confiable (preliminar) |
-| Señales medias o altas sin evidencia externa | Dudoso |
-| Evidencia externa que refuta | Falso |
-| Evidencia externa que respalda | Confiable |
+### Base de datos (Supabase)
+
+1. Ve a [Supabase Dashboard](https://supabase.com) → SQL Editor
+2. Pega y ejecuta el contenido de `backend/supabase/schema.sql`
+3. Copia `Project URL` y `service_role key` desde Project Settings → API
+
+## Variables de entorno
+
+| Variable | ¿Requerida? | Descripción |
+|----------|-------------|-------------|
+| `GOOGLE_FACTCHECK_API_KEY` | ✅ Sí | API Key de Google Fact Check Tools |
+| `TAVILY_API_KEY` | ✅ Sí | API Key de Tavily Search |
+| `SUPABASE_URL` | ⚠️ No* | URL del proyecto Supabase |
+| `SUPABASE_SERVICE_KEY` | ⚠️ No* | Service role key de Supabase |
+| `FACTIFY_ADMIN_KEY` | ❌ No | Clave para panel `/admin/evaluation` |
+| `CACHE_TTL_HOURS` | ❌ No | TTL de caché en Supabase (default: 48h) |
+
+*\* Requeridas solo si usas caché o analíticas.*
+
+## Sistema de clasificación
+
+| Resultado | ¿Cuándo ocurre? |
+|-----------|-----------------|
+| **🟢 Confiable** | Evidencia externa respalda la afirmación + señales textuales bajas |
+| **🟡 Dudoso** | Sin evidencia externa concluyente + señales medias/altas |
+| **🔴 Falso** | Evidencia externa contradice la afirmación, o señales muy altas + imposibilidad factual |
+
+### Escala de confianza
+
+- **86–100%**: Múltiples fuentes coinciden (todas respaldan o todas contradicen)
+- **70–85%**: Fuentes con alto consenso
+- **50–69%**: Evidencia mixta o parcial
+- **< 50%**: Análisis principalmente heurístico (pocas fuentes externas)
+
+## APIs externas
+
+| API | Propósito | Límites |
+|-----|-----------|---------|
+| **Google Fact Check** | Buscar verificaciones previas de fact-checkers | 100 queries/día (plan gratuito) |
+| **Tavily Search** | Buscar fuentes web relevantes | 1000 queries/mes (plan gratuito) |
+| **Wikipedia** (español) | Consultar conocimiento general y detectar personas fallecidas | Sin límite (API pública) |
+
+## Evaluación
+
+El proyecto incluye un evaluador con **30 casos reales** que mide la precisión del motor:
+
+```bash
+npm run test:evaluation
+```
+
+**Resultado esperado: 100% de precisión** en las 3 categorías de clasificación.
+
+El evaluador también reporta:
+- Matriz de confusión
+- Tasa de falsos positivos y falsos negativos
+- Tiempo promedio de respuesta
+- Resultado por cada caso individual
+
+## Roadmap
+
+### Entregado (2026 Q1-Q2)
+
+- ✅ Motor de verificación con NLP heurístico
+- ✅ Integración con Google Fact Check Tools, Tavily y Wikipedia
+- ✅ Detección de personas fallecidas y claims imposibles
+- ✅ Sistema de postura (respalda / contradice) por fuente
+- ✅ Veredicto ponderado con porcentaje de confianza
+- ✅ Dashboard de estadísticas con métricas de uso
+- ✅ Alertas preventivas antes de compartir
+- ✅ Modo oscuro
+- ✅ Evaluación reproducible con 30 casos
+- ✅ Arquitectura serverless en Vercel
+
+### Corto plazo
+
+- Feedback de usuario (¿fue útil? / ¿entendiste el resultado?)
+- Exportar resultado como imagen / PDF
+- Soporte para compartir en redes sociales
+- Más ejemplos interactivos en la página principal
+
+### Mediano plazo
+
+- Integración de modelo preentrenado (BERT / DistilBERT)
+- Soporte multilingüe (inglés, portugués)
+- Plugin para navegador (Chrome / Firefox)
+- Historial sincronizado entre dispositivos (vía Supabase)
+
+### Largo plazo
+
+- API pública para terceros
+- Análisis de imágenes y videos
+- Colaboración con fact-checkers profesionales
+- Aplicación móvil (React Native)
+
+## Equipo
+
+<table>
+  <tr>
+    <td align="center" width="20%">
+      <strong>Felipe Figueroa</strong><br>
+      <sub>Desarrollador Full-Stack</sub><br>
+      <sub>UNAB Viña del Mar</sub>
+    </td>
+  </tr>
+</table>
+
+## Licencia
+
+MIT © 2026 — Proyecto académico Universidad Andrés Bello.
+
+Distribuido bajo licencia MIT. Ver archivo `LICENSE` para más información.

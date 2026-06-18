@@ -212,6 +212,7 @@ Configura las variables de entorno en Vercel Dashboard → Settings → Environm
 |----------|-------------|-------------|
 | `GOOGLE_FACTCHECK_API_KEY` | ✅ Sí | API Key de Google Fact Check Tools |
 | `TAVILY_API_KEY` | ✅ Sí | API Key de Tavily Search |
+| `HF_API_TOKEN` | ❌ No | Token de Hugging Face (modelo `Narrativaai/fake-news-detection-spanish`) |
 | `SUPABASE_URL` | ⚠️ No* | URL del proyecto Supabase |
 | `SUPABASE_SERVICE_KEY` | ⚠️ No* | Service role key de Supabase |
 | `FACTIFY_ADMIN_KEY` | ❌ No | Clave para panel `/admin/evaluation` |
@@ -241,6 +242,7 @@ Configura las variables de entorno en Vercel Dashboard → Settings → Environm
 | **Google Fact Check** | Buscar verificaciones previas de fact-checkers | 100 queries/día (plan gratuito) |
 | **Tavily Search** | Buscar fuentes web relevantes | 1000 queries/mes (plan gratuito) |
 | **Wikipedia** (español) | Consultar conocimiento general y detectar personas fallecidas | Sin límite (API pública) |
+| **Hugging Face** | Modelo `Narrativaai/fake-news-detection-spanish` para detección de fake news | ~30k caracteres/mes (plan gratuito) |
 
 ## Evaluación
 

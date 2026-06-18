@@ -1,9 +1,11 @@
 /**
  * Motor de verificación de Factify (lado servidor).
  *
- * Orquesta dos capas, ambas opcionales y con degradación elegante:
+ * Orquesta cuatro capas, todas opcionales y con degradación elegante:
  *   1. Google Fact Check Tools API  -> ¿la afirmación ya fue verificada por profesionales?
  *   2. Tavily Search API            -> recupera fuentes/evidencia reales y actuales.
+ *   3. Wikipedia API (español)      -> conocimiento general y detección de personas fallecidas.
+ *   4. Hugging Face Inference API   -> modelo Narrativaai/fake-news-detection-spanish.
  *
  * Si no hay claves configuradas (o todo falla) se devuelve únicamente el
  * análisis heurístico local, de modo que la app siempre funciona.
@@ -494,6 +496,54 @@ async function queryFactCheck(text: string, debug: string[]): Promise<FactCheckM
   } catch (e: any) {
     debug.push(`factcheck: excepción ${e?.message ?? "desconocida"}`);
     return null;
+  }
+}
+
+const HF_MODEL = "Narrativaai/fake-news-detection-spanish";
+
+async function queryHuggingFace(text: string): Promise<VerifiedSource[]> {
+  const key = env("HF_API_TOKEN");
+  if (!key) return [];
+
+  try {
+    const res = await fetchWithTimeout(
+      `https://api-inference.huggingface.co/models/${HF_MODEL}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${key}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ inputs: text.slice(0, 1024) }),
+      },
+      8000,
+    );
+    if (!res.ok) return [];
+
+    const data: any = await res.json();
+    const scores: { label: string; score: number }[] = Array.isArray(data) ? data[0] : data;
+    if (!scores?.length) return [];
+
+    const fakeScore = scores.find((s) => s.label === "FAKE")?.score ?? 0;
+    const realScore = scores.find((s) => s.label === "REAL")?.score ?? 0;
+    const maxScore = Math.max(fakeScore, realScore);
+    if (maxScore < 0.5) return [];
+
+    let stance: "support" | "contradict" | "neutral" = "neutral";
+    if (fakeScore > 0.7) stance = "contradict";
+    else if (realScore > 0.7) stance = "support";
+
+    return [
+      {
+        title: `Modelo: ${HF_MODEL.split("/").pop()}`,
+        url: `https://huggingface.co/${HF_MODEL}`,
+        snippet: `FAKE: ${(fakeScore * 100).toFixed(0)}% | REAL: ${(realScore * 100).toFixed(0)}%`,
+        publisher: "Hugging Face Inference API",
+        stance,
+      },
+    ];
+  } catch {
+    return [];
   }
 }
 
@@ -1123,16 +1173,19 @@ export async function runVerification(input: VerificationInput): Promise<Verific
   let factCheck: FactCheckMatch | null = null;
   let tavilySources: VerifiedSource[] = [];
   let wikiSources: VerifiedSource[] = [];
+  let hfSources: VerifiedSource[] = [];
 
   if (!input.skipExternal) {
-    [factCheck, tavilySources, wikiSources] = await Promise.all([
+    [factCheck, tavilySources, wikiSources, hfSources] = await Promise.all([
       queryFactCheck(text, debug),
       queryTavily(text),
       queryWikipedia(text),
+      queryHuggingFace(text),
     ]);
     if (factCheck) providers.push("factcheck");
     if (tavilySources.length) providers.push("tavily");
     if (wikiSources.length) providers.push("wikipedia");
+    if (hfSources.length) providers.push("huggingface");
   } else {
     debug.push("evaluación: skipExternal activo (solo análisis local)");
   }
@@ -1141,6 +1194,7 @@ export async function runVerification(input: VerificationInput): Promise<Verific
   if (factCheck) sources.push(factCheck.source);
   sources.push(...tavilySources);
   sources.push(...wikiSources);
+  sources.push(...hfSources);
 
   const evidence = analyzeEvidenceSources(sources, text);
   const sourceVerdict = input.skipExternal

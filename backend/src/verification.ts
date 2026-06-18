@@ -292,7 +292,7 @@ function claimRelevance(userText: string, claimText: string): number {
   return coverage * 0.65 + jaccard * 0.35;
 }
 
-const MIN_CLAIM_RELEVANCE = 0.42;
+const MIN_CLAIM_RELEVANCE = 0.50;
 
 function discriminatingWords(words: Set<string>): string[] {
   return [...words].filter((w) => !GENERIC_FACTCHECK_WORDS.has(w));
@@ -510,9 +510,9 @@ function sourceQualityWeight(source: VerifiedSource): number {
   return weight;
 }
 
-const MIN_SOURCE_RELEVANCE = 0.55;
+const MIN_SOURCE_RELEVANCE = 0.62;
 /** Umbral más bajo para detectar que un titular describe el mismo hecho. */
-const MIN_CORROBORATION_RELEVANCE = 0.45;
+const MIN_CORROBORATION_RELEVANCE = 0.52;
 
 function sourceSharesClaimAnchors(userText: string, hay: string, relevance = 0): boolean {
   const anchors = claimAnchorWords(userText);
@@ -520,9 +520,9 @@ function sourceSharesClaimAnchors(userText: string, hay: string, relevance = 0):
   const overlap = wordOverlapCount(anchors, sourceWords);
   const ratio = overlap / Math.max(1, anchors.size);
 
-  if (ratio >= 0.5) return true;
-  if (relevance >= 0.65 && ratio >= 0.35) return true;
-  if (relevance >= 0.72 && overlap >= 2) return true;
+  if (ratio >= 0.6) return true;
+  if (relevance >= 0.72 && ratio >= 0.45) return true;
+  if (relevance >= 0.82 && overlap >= 2) return true;
 
   const required =
     anchors.size <= 2 ? Math.max(1, anchors.size) : Math.ceil(anchors.size * 0.5);
@@ -541,6 +541,12 @@ function sourceReportsSameClaim(userText: string, source: VerifiedSource): boole
 
   if (isIncidentClaim(userText) && !sourceMatchesClaimEvent(userText, hay)) return false;
 
+  const userWords = significantWords(userText);
+  const sourceWords = significantWords(hay);
+  const uniqueUserWords = [...userWords].filter((w) => w.length >= 6);
+  const hasUniqueMatch = uniqueUserWords.length === 0 || uniqueUserWords.some((w) => sourceWords.has(w));
+  if (!hasUniqueMatch) return false;
+
   if (relevance >= MIN_SOURCE_RELEVANCE) return true;
   return relevance >= MIN_CORROBORATION_RELEVANCE && hasFactualMarker(hay);
 }
@@ -549,7 +555,7 @@ function sourceReportsSameClaim(userText: string, source: VerifiedSource): boole
 function sourceRefutesClaim(userText: string, source: VerifiedSource): boolean {
   const hay = prepareClaimText(`${source.title} ${source.snippet ?? ""}`);
   const relevance = claimRelevanceStrict(userText, source);
-  if (relevance < 0.3) return false;
+  if (relevance < 0.42) return false;
 
   const ratingSnippet = source.snippet ?? "";
   if (ratingSnippet.includes("Calificación:") || ratingSnippet.includes("Rating:")) {
@@ -595,7 +601,7 @@ function detectSourceStance(userText: string, source: VerifiedSource): VerifiedS
   if (source.stance === "support" || source.stance === "contradict") return source.stance;
 
   const relevance = claimRelevanceStrict(userText, source);
-  if (relevance < 0.2) return "neutral";
+  if (relevance < 0.35) return "neutral";
 
   if (sourceRefutesClaim(userText, source)) return "contradict";
   if (supportsClaimExplicitly(userText, source)) return "support";
@@ -719,35 +725,37 @@ function computeVerdictFromSources(
 
   let classification: Classification;
 
-  if (factCheck?.classification === "falso") {
+  if (factCheck?.classification === "falso" && !factCheck.source.lowRelevance) {
     classification = "falso";
-  } else if (newsContradict.length >= 1 && contradictWeight >= supportWeight * 0.75) {
+  } else if (newsContradict.length >= 1 && newsContradict[0].relevance >= 0.55 && contradictWeight >= supportWeight * 0.85) {
     classification = "falso";
-  } else if (usableContradict.length >= 2 && contradictRatio >= 0.45) {
+  } else if (usableContradict.length >= 2 && usableContradict[0].relevance >= 0.52 && usableContradict[1].relevance >= 0.52 && contradictRatio >= 0.55) {
     classification = "falso";
-  } else if (contradictRatio >= 0.55 && usableContradict.length >= 1) {
+  } else if (contradictRatio >= 0.65 && usableContradict.length >= 1 && usableContradict[0].relevance >= 0.55) {
     classification = "falso";
   } else if (factCheck?.classification === "confiable" && newsSupport.length >= 1) {
     classification = "confiable";
-  } else if (newsSupport.length >= 2 && contradictN === 0) {
+  } else if (newsSupport.length >= 2 && newsSupport[0].relevance >= 0.55 && newsSupport[1].relevance >= 0.55 && contradictN === 0) {
     classification = "confiable";
-  } else if (newsSupport.length >= 1 && usableSupport.length >= 2 && contradictN === 0) {
+  } else if (newsSupport.length >= 1 && newsSupport[0].relevance >= 0.58 && usableSupport.length >= 2 && contradictN === 0) {
     classification = "confiable";
   } else if (
     newsSupport.length === 1 &&
     supportN === 1 &&
     contradictN === 0 &&
-    newsSupport[0].relevance >= 0.68
+    newsSupport[0].relevance >= 0.72
   ) {
     classification = "confiable";
   } else if (
-    supportRatio >= 0.6 &&
+    supportRatio >= 0.65 &&
     usableSupport.length >= 2 &&
+    usableSupport[0].relevance >= 0.55 &&
+    usableSupport[1].relevance >= 0.55 &&
     newsSupport.length >= 1 &&
-    contradictRatio < 0.25
+    contradictRatio < 0.2
   ) {
     classification = "confiable";
-  } else if (contradictWeight > supportWeight * 1.3 && usableContradict.length >= 1) {
+  } else if (contradictWeight > supportWeight * 1.5 && usableContradict.length >= 1 && usableContradict[0].relevance >= 0.5) {
     classification = "falso";
   } else {
     classification = "dudoso";

@@ -42,7 +42,7 @@ function verifyApiDevServer(mode: string) {
           }
 
           const modPath = path.resolve(rootDir, "backend/src/verification.ts");
-          const { runVerification } = await server.ssrLoadModule(modPath);
+          const { runVerification } = await server.ssrLoadModule(modPath + `?v=${Date.now()}`);
           const result = await runVerification({ text: validated.text, kind: validated.kind });
           res.setHeader("Content-Type", "application/json; charset=utf-8");
           res.end(JSON.stringify(result));
@@ -74,7 +74,7 @@ function verifyApiDevServer(mode: string) {
 
         try {
           const modPath = path.resolve(rootDir, "backend/src/evaluation.ts");
-          const { runEvaluationReport } = await server.ssrLoadModule(modPath);
+          const { runEvaluationReport } = await server.ssrLoadModule(modPath + `?v=${Date.now()}`);
           const report = await runEvaluationReport();
           res.setHeader("Content-Type", "application/json; charset=utf-8");
           res.end(JSON.stringify(report));

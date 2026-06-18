@@ -532,8 +532,9 @@ function sourceSharesClaimAnchors(userText: string, hay: string, relevance = 0):
 /**
  * El titular o snippet describe el mismo hecho que afirma el usuario.
  * Regla general: similitud semántica + ideas clave compartidas (cualquier tema).
+ * @param commonClaimWords Palabras del usuario que aparecen en muchas fuentes (entidad, no evento).
  */
-function sourceReportsSameClaim(userText: string, source: VerifiedSource): boolean {
+function sourceReportsSameClaim(userText: string, source: VerifiedSource, commonClaimWords?: Set<string>): boolean {
   const hay = prepareClaimText(`${source.title} ${source.snippet ?? ""}`);
   const relevance = claimRelevanceStrict(userText, source);
   if (relevance < MIN_CORROBORATION_RELEVANCE) return false;
@@ -544,7 +545,7 @@ function sourceReportsSameClaim(userText: string, source: VerifiedSource): boole
   const userWords = significantWords(userText);
   const sourceWords = significantWords(hay);
   const uniqueUserWords = [...userWords].filter((w) => w.length >= 6);
-  const hasUniqueMatch = uniqueUserWords.length === 0 || uniqueUserWords.some((w) => sourceWords.has(w));
+  const hasUniqueMatch = uniqueUserWords.length === 0 || uniqueUserWords.some((w) => sourceWords.has(w) && (!commonClaimWords || !commonClaimWords.has(w)));
   if (!hasUniqueMatch) return false;
 
   if (relevance >= MIN_SOURCE_RELEVANCE) return true;
@@ -573,13 +574,13 @@ function sourceRefutesClaim(userText: string, source: VerifiedSource): boolean {
   );
 }
 
-function sourceCorroboratesClaim(userText: string, source: VerifiedSource): boolean {
+function sourceCorroboratesClaim(userText: string, source: VerifiedSource, commonClaimWords?: Set<string>): boolean {
   const hay = prepareClaimText(`${source.title} ${source.snippet ?? ""}`);
   if (DEBUNK_TERMS.some((t) => hay.includes(normalizeText(t)))) return false;
-  return sourceReportsSameClaim(userText, source);
+  return sourceReportsSameClaim(userText, source, commonClaimWords);
 }
 
-function supportsClaimExplicitly(userText: string, source: VerifiedSource): boolean {
+function supportsClaimExplicitly(userText: string, source: VerifiedSource, commonClaimWords?: Set<string>): boolean {
   if (!isUsableEvidenceSource(source)) return false;
 
   const ratingSnippet = source.snippet ?? "";
@@ -590,21 +591,21 @@ function supportsClaimExplicitly(userText: string, source: VerifiedSource): bool
   }
 
   if (sourceRefutesClaim(userText, source)) return false;
-  if (!sourceCorroboratesClaim(userText, source)) return false;
+  if (!sourceCorroboratesClaim(userText, source, commonClaimWords)) return false;
 
   const relevance = claimRelevanceStrict(userText, source);
   if (isVerifiableNewsSource(source)) return true;
   return relevance >= 0.58;
 }
 
-function detectSourceStance(userText: string, source: VerifiedSource): VerifiedSource["stance"] {
+function detectSourceStance(userText: string, source: VerifiedSource, commonClaimWords?: Set<string>): VerifiedSource["stance"] {
   if (source.stance === "support" || source.stance === "contradict") return source.stance;
 
   const relevance = claimRelevanceStrict(userText, source);
   if (relevance < 0.35) return "neutral";
 
   if (sourceRefutesClaim(userText, source)) return "contradict";
-  if (supportsClaimExplicitly(userText, source)) return "support";
+  if (supportsClaimExplicitly(userText, source, commonClaimWords)) return "support";
 
   return "neutral";
 }
@@ -630,9 +631,22 @@ function analyzeEvidenceSources(sources: VerifiedSource[], userText: string): Ev
   const contradicting: ScoredEvidence[] = [];
   const neutral: ScoredEvidence[] = [];
 
+  const userWords = significantWords(userText);
+  const wordSourceCount = new Map<string, number>();
+  for (const source of sources) {
+    const hay = prepareClaimText(`${source.title} ${source.snippet ?? ""}`);
+    const srcWords = significantWords(hay);
+    for (const w of srcWords) {
+      if (userWords.has(w)) {
+        wordSourceCount.set(w, (wordSourceCount.get(w) ?? 0) + 1);
+      }
+    }
+  }
+  const commonClaimWords = new Set([...wordSourceCount.entries()].filter(([_, count]) => count >= 3).map(([w]) => w));
+
   for (const source of sources) {
     const relevance = claimRelevanceStrict(userText, source);
-    source.stance = detectSourceStance(userText, source);
+    source.stance = detectSourceStance(userText, source, commonClaimWords);
     const weight = sourceQualityWeight(source);
     const effectiveWeight = weight * relevance;
 

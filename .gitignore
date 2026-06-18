@@ -1,0 +1,19 @@
+node_modules
+dist
+dist-ssr
+.vercel
+
+# Variables de entorno (claves de APIs) - NUNCA subir
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea

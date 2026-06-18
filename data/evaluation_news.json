@@ -1,0 +1,242 @@
+[
+  {
+    "id": 1,
+    "title": "Ministerio publica calendario oficial de vacunación",
+    "text": "El Ministerio de Salud publicó en su sitio institucional el calendario actualizado de vacunación para este año. El documento incluye fechas, grupos prioritarios y centros habilitados, además de un enlace al decreto correspondiente.",
+    "expected_classification": "Confiable",
+    "validation_source": "Fuente oficial identificada",
+    "notes": "Lenguaje neutral, institución identificable, fecha y documento de respaldo."
+  },
+  {
+    "id": 2,
+    "title": "Universidad informa resultados de investigación",
+    "text": "Una universidad acreditada presentó los resultados preliminares de un estudio sobre hábitos de lectura. La publicación identifica al equipo investigador, describe la muestra utilizada y advierte que los resultados aún deben ser revisados por pares.",
+    "expected_classification": "Confiable",
+    "validation_source": "Publicación institucional",
+    "notes": "Autoría, metodología y limitaciones claramente indicadas."
+  },
+  {
+    "id": 3,
+    "title": "Servicio meteorológico emite alerta preventiva",
+    "text": "El servicio meteorológico nacional emitió una alerta preventiva por lluvias intensas para determinadas regiones. El aviso especifica fecha, horario, zonas afectadas y recomendaciones de seguridad para la población.",
+    "expected_classification": "Confiable",
+    "validation_source": "Organismo oficial",
+    "notes": "Información verificable, concreta y sin lenguaje sensacionalista."
+  },
+  {
+    "id": 4,
+    "title": "Banco Central publica informe económico",
+    "text": "El Banco Central publicó su informe mensual con cifras de inflación, empleo y actividad económica. Los datos incluyen series históricas, metodología de cálculo y enlaces a las bases utilizadas.",
+    "expected_classification": "Confiable",
+    "validation_source": "Institución oficial",
+    "notes": "Datos trazables y metodología disponible."
+  },
+  {
+    "id": 5,
+    "title": "Municipalidad anuncia corte programado de tránsito",
+    "text": "La municipalidad informó un corte programado de tránsito por trabajos viales. El comunicado incluye calles afectadas, horarios, desvíos recomendados y un número de contacto para consultas.",
+    "expected_classification": "Confiable",
+    "validation_source": "Comunicado municipal",
+    "notes": "Fuente identificada y detalles operativos verificables."
+  },
+  {
+    "id": 6,
+    "title": "Hospital informa nuevo horario de atención",
+    "text": "El hospital regional comunicó un cambio en el horario de atención de su unidad ambulatoria. La información fue publicada en sus canales oficiales e incluye la fecha de inicio y los servicios involucrados.",
+    "expected_classification": "Confiable",
+    "validation_source": "Canal institucional",
+    "notes": "Información específica y respaldada por la institución responsable."
+  },
+  {
+    "id": 7,
+    "title": "Estudio científico describe hallazgo con cautela",
+    "text": "Un artículo científico reportó una asociación entre horas de sueño y concentración en estudiantes. Los autores aclaran que el estudio no demuestra causalidad y recomiendan realizar investigaciones adicionales.",
+    "expected_classification": "Confiable",
+    "validation_source": "Artículo científico con limitaciones declaradas",
+    "notes": "Lenguaje cauteloso y sin conclusiones absolutas."
+  },
+  {
+    "id": 8,
+    "title": "Empresa pública reporta interrupción del servicio",
+    "text": "La empresa distribuidora informó una interrupción temporal del suministro eléctrico debido a trabajos de mantenimiento. El aviso detalla sectores afectados y tiempo estimado de reposición.",
+    "expected_classification": "Confiable",
+    "validation_source": "Comunicado oficial de la empresa",
+    "notes": "Datos concretos y verificables."
+  },
+  {
+    "id": 9,
+    "title": "Instituto de estadísticas publica resultados censales",
+    "text": "El instituto nacional de estadísticas publicó resultados preliminares del último censo. El informe explica que las cifras pueden ser ajustadas después de los procesos de validación y revisión.",
+    "expected_classification": "Confiable",
+    "validation_source": "Informe estadístico oficial",
+    "notes": "Fuente trazable y advertencia metodológica."
+  },
+  {
+    "id": 10,
+    "title": "Agencia sanitaria retira lote específico de producto",
+    "text": "La autoridad sanitaria ordenó retirar un lote específico de un producto por un problema detectado en su etiquetado. El comunicado identifica número de lote, fabricante y procedimiento para devolución.",
+    "expected_classification": "Confiable",
+    "validation_source": "Alerta sanitaria oficial",
+    "notes": "Contenido preciso, verificable y con instrucciones concretas."
+  },
+  {
+    "id": 11,
+    "title": "Expertos aseguran que una fruta mejora la memoria",
+    "text": "Un grupo de expertos afirma que consumir una determinada fruta todos los días podría mejorar la memoria, pero la publicación no identifica a los especialistas ni enlaza el estudio mencionado.",
+    "expected_classification": "Dudosa",
+    "validation_source": "Evidencia insuficiente",
+    "notes": "Afirmación plausible, pero sin autores ni respaldo verificable."
+  },
+  {
+    "id": 12,
+    "title": "Nueva aplicación promete reducir el estrés",
+    "text": "Una nueva aplicación asegura que puede reducir el estrés en pocos días. El texto menciona resultados positivos, pero no indica cuántas personas participaron ni quién realizó la evaluación.",
+    "expected_classification": "Dudosa",
+    "validation_source": "Publicidad sin metodología",
+    "notes": "Falta información sobre muestra, responsables y método."
+  },
+  {
+    "id": 13,
+    "title": "Circula posible cambio en horarios escolares",
+    "text": "En redes sociales se comenta que los colegios cambiarán sus horarios el próximo mes. La publicación no incluye comunicado oficial, fecha de vigencia ni nombre de la autoridad responsable.",
+    "expected_classification": "Dudosa",
+    "validation_source": "Rumor sin confirmación oficial",
+    "notes": "Puede ser cierto o falso, pero faltan fuentes verificables."
+  },
+  {
+    "id": 14,
+    "title": "Estudio preliminar vincula bebida con mayor energía",
+    "text": "Una nota afirma que una bebida natural aumenta la energía durante todo el día. Se menciona un estudio preliminar, aunque no se entrega enlace, institución responsable ni detalles del experimento.",
+    "expected_classification": "Dudosa",
+    "validation_source": "Estudio no identificable",
+    "notes": "Afirmación posible, pero evidencia incompleta."
+  },
+  {
+    "id": 15,
+    "title": "Vecinos reportan luces extrañas en el cielo",
+    "text": "Varias personas aseguran haber visto luces extrañas sobre la ciudad. No existen registros oficiales ni imágenes verificadas, y algunas fotografías compartidas corresponden a lugares distintos.",
+    "expected_classification": "Dudosa",
+    "validation_source": "Testimonios no verificados",
+    "notes": "Existen reportes, pero la evidencia es insuficiente."
+  },
+  {
+    "id": 16,
+    "title": "Producto casero podría eliminar manchas",
+    "text": "Una publicación recomienda una mezcla casera para eliminar manchas de la piel. No se identifica a profesionales de salud ni se presentan pruebas sobre su seguridad o efectividad.",
+    "expected_classification": "Dudosa",
+    "validation_source": "Consejo sin respaldo profesional",
+    "notes": "No debe considerarse falso automáticamente, pero carece de evidencia."
+  },
+  {
+    "id": 17,
+    "title": "Encuesta viral afirma que todos prefieren clases online",
+    "text": "Una encuesta compartida en redes afirma que casi todos los estudiantes prefieren clases online. No informa tamaño de la muestra, edad de los participantes ni forma de selección.",
+    "expected_classification": "Dudosa",
+    "validation_source": "Encuesta sin ficha técnica",
+    "notes": "Conclusión generalizada a partir de datos no documentados."
+  },
+  {
+    "id": 18,
+    "title": "Se anuncia supuesto descuento nacional",
+    "text": "Un mensaje indica que todas las tiendas aplicarán un descuento especial durante el fin de semana. La publicación no identifica a la organización responsable ni entrega bases legales o comerciales.",
+    "expected_classification": "Dudosa",
+    "validation_source": "Promoción no confirmada",
+    "notes": "No hay evidencia suficiente para confirmar o descartar."
+  },
+  {
+    "id": 19,
+    "title": "Video afirma mostrar un hecho reciente",
+    "text": "Un video compartido en redes asegura mostrar un incidente ocurrido ayer. Sin embargo, no incluye ubicación, fecha verificable ni fuente original, y algunos usuarios indican que el registro podría ser antiguo.",
+    "expected_classification": "Dudosa",
+    "validation_source": "Contenido audiovisual sin contexto verificable",
+    "notes": "Falta contexto temporal y geográfico."
+  },
+  {
+    "id": 20,
+    "title": "Mensaje advierte sobre supuesto cierre de bancos",
+    "text": "Un mensaje reenviado afirma que los bancos cerrarán por varios días y recomienda retirar dinero. No cita ninguna autoridad, comunicado oficial ni fecha exacta.",
+    "expected_classification": "Dudosa",
+    "validation_source": "Cadena sin fuente",
+    "notes": "Afirmación de alto impacto sin respaldo verificable."
+  },
+  {
+    "id": 21,
+    "title": "Beber agua con sal cura cualquier infección",
+    "text": "Una publicación asegura que beber agua con sal cura cualquier infección en menos de una hora y reemplaza todos los tratamientos médicos.",
+    "expected_classification": "Falsa",
+    "validation_source": "Afirmación médica incompatible con evidencia básica",
+    "notes": "Promesa absoluta y peligrosa; no existe un tratamiento universal de ese tipo."
+  },
+  {
+    "id": 22,
+    "title": "Los teléfonos leen todos los pensamientos",
+    "text": "Un mensaje afirma que los teléfonos móviles pueden leer literalmente todos los pensamientos de una persona mediante el micrófono, incluso cuando el dispositivo está apagado.",
+    "expected_classification": "Falsa",
+    "validation_source": "Afirmación tecnológicamente imposible en esos términos",
+    "notes": "Confunde seguimiento de comportamiento con lectura literal de pensamientos."
+  },
+  {
+    "id": 23,
+    "title": "Una ciudad prohibió respirar al aire libre",
+    "text": "Una cadena viral sostiene que una ciudad aprobó una ley que prohíbe respirar al aire libre durante las tardes y que habrá multas automáticas para quien incumpla.",
+    "expected_classification": "Falsa",
+    "validation_source": "Afirmación absurda y sin respaldo legal",
+    "notes": "No presenta autoridad, norma ni contexto verificable."
+  },
+  {
+    "id": 24,
+    "title": "Una pastilla permite vivir sin dormir",
+    "text": "Una publicación comercial afirma que una sola pastilla permite permanecer despierto durante meses sin consecuencias para la salud y sin necesidad de dormir.",
+    "expected_classification": "Falsa",
+    "validation_source": "Afirmación contraria al conocimiento médico básico",
+    "notes": "Promesa extrema e incompatible con la fisiología humana."
+  },
+  {
+    "id": 25,
+    "title": "Las vacunas contienen dispositivos de rastreo",
+    "text": "Un mensaje afirma que todas las vacunas contienen microdispositivos secretos que permiten rastrear a las personas en tiempo real.",
+    "expected_classification": "Falsa",
+    "validation_source": "Desinformación ampliamente refutada",
+    "notes": "Afirmación conspirativa sin evidencia verificable."
+  },
+  {
+    "id": 26,
+    "title": "La luna es una proyección instalada por gobiernos",
+    "text": "Una publicación sostiene que la luna no es un cuerpo celeste, sino una proyección creada por distintos gobiernos para controlar a la población.",
+    "expected_classification": "Falsa",
+    "validation_source": "Afirmación incompatible con evidencia astronómica",
+    "notes": "Contenido conspirativo y sin respaldo científico."
+  },
+  {
+    "id": 27,
+    "title": "Compartir un mensaje elimina una deuda bancaria",
+    "text": "Una cadena asegura que reenviar el mensaje a veinte contactos elimina automáticamente cualquier deuda bancaria registrada a nombre del usuario.",
+    "expected_classification": "Falsa",
+    "validation_source": "Afirmación imposible",
+    "notes": "No existe mecanismo legal o financiero de ese tipo."
+  },
+  {
+    "id": 28,
+    "title": "Un alimento hace crecer veinte centímetros en una semana",
+    "text": "Una publicidad afirma que comer un determinado alimento permite crecer veinte centímetros en una semana sin importar la edad.",
+    "expected_classification": "Falsa",
+    "validation_source": "Afirmación biológicamente imposible",
+    "notes": "Promesa extrema y sin evidencia."
+  },
+  {
+    "id": 29,
+    "title": "Apagar el wifi detiene todos los terremotos",
+    "text": "Una publicación viral afirma que si todas las personas apagan el wifi durante diez minutos se pueden detener los terremotos en cualquier país.",
+    "expected_classification": "Falsa",
+    "validation_source": "Afirmación científicamente imposible",
+    "notes": "No existe relación causal entre redes wifi y actividad sísmica."
+  },
+  {
+    "id": 30,
+    "title": "Una palabra secreta desbloquea dinero en cajeros",
+    "text": "Un video asegura que escribir una palabra secreta en cualquier cajero automático entrega dinero gratis sin afectar ninguna cuenta bancaria.",
+    "expected_classification": "Falsa",
+    "validation_source": "Afirmación fraudulenta e imposible",
+    "notes": "Contenido engañoso que promueve una conducta ilegal."
+  }
+]

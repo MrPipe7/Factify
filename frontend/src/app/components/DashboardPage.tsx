@@ -94,7 +94,7 @@ export function DashboardPage() {
 
         {!loading && !error && (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
               <div className="surface-panel p-5 rounded-xl">
                 <p className="text-gray-400 mb-1" style={{ fontSize: "0.75rem", fontWeight: 600 }}>VERIFICACIONES</p>
                 <p className="text-gray-900" style={{ fontSize: "2rem", fontWeight: 700 }}>{totalVerifications}</p>
@@ -107,12 +107,6 @@ export function DashboardPage() {
                 <p className="text-gray-400 mb-1" style={{ fontSize: "0.75rem", fontWeight: 600 }}>NO COMPARTIÓ</p>
                 <p className="text-red-500" style={{ fontSize: "2rem", fontWeight: 700 }}>
                   {totalVerifications > totalShares ? totalVerifications - totalShares : 0}
-                </p>
-              </div>
-              <div className="surface-panel p-5 rounded-xl">
-                <p className="text-gray-400 mb-1" style={{ fontSize: "0.75rem", fontWeight: 600 }}>TASA DE COMPARTICIÓN</p>
-                <p className="text-gray-900" style={{ fontSize: "2rem", fontWeight: 700 }}>
-                  {totalVerifications > 0 ? `${Math.round((totalShares / totalVerifications) * 100)}%` : "—"}
                 </p>
               </div>
             </div>

@@ -8,7 +8,6 @@
 ![Google Fact Check](https://img.shields.io/badge/Google-Fact%20Check-4285F4?logo=google&logoColor=white)
 ![Tavily](https://img.shields.io/badge/Tavily-Search-FF6F00?logo=react&logoColor=white)
 ![Wikipedia](https://img.shields.io/badge/Wikipedia-API-000000?logo=wikipedia&logoColor=white)
-![Estado](https://img.shields.io/badge/Estado-Producci%C3%B3n-brightgreen)
 
 **Factify** es una plataforma web que analiza contenido noticioso y lo clasifica como **confiable**, **dudoso** o **falso**, combinando reglas lingüísticas con consultas a fuentes externas para emitir un veredicto basado en evidencia real.
 

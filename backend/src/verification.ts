@@ -545,7 +545,8 @@ function sourceReportsSameClaim(userText: string, source: VerifiedSource, common
   const userWords = significantWords(userText);
   const sourceWords = significantWords(hay);
   const uniqueUserWords = [...userWords].filter((w) => w.length >= 6);
-  const hasUniqueMatch = uniqueUserWords.length === 0 || uniqueUserWords.some((w) => sourceWords.has(w) && (!commonClaimWords || !commonClaimWords.has(w)));
+  const allUniqueAreCommon = uniqueUserWords.length > 0 && commonClaimWords && uniqueUserWords.every((w) => commonClaimWords.has(w));
+  const hasUniqueMatch = uniqueUserWords.length === 0 || allUniqueAreCommon || uniqueUserWords.some((w) => sourceWords.has(w) && (!commonClaimWords || !commonClaimWords.has(w)));
   if (!hasUniqueMatch) return false;
 
   if (relevance >= MIN_SOURCE_RELEVANCE) return true;

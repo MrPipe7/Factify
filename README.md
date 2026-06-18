@@ -270,5 +270,3 @@ El evaluador también reporta:
 </table>
 
 Proyecto académico Universidad Andrés Bello.
-
-Distribuido bajo licencia MIT. Ver archivo `LICENSE` para más información.

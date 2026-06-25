@@ -19,3 +19,6 @@ npm-debug.log*
 .idea
 
 .vercel
+
+# PDFs de presentación / informes
+*.pdf

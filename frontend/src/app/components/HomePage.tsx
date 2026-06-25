@@ -74,21 +74,6 @@ export function HomePage({ onResult, onNavigateTips }: HomePageProps) {
     }
   };
 
-  const exampleTexts = [
-    {
-      label: "Noticia dudosa",
-      text: "¡URGENTE! El gobierno está ocultando la verdad sobre las vacunas. Dicen que un amigo me dijo que los científicos están prohibidos de hablar. Comparte antes de que lo borren. ¡¡INCREÍBLE lo que está pasando!!",
-    },
-    {
-      label: "Noticia confiable",
-      text: "Según un estudio publicado en la revista Science, investigadores de la Universidad de Chile han confirmado una reducción del 30% en casos de dengue gracias a la implementación de nuevos protocolos sanitarios. El ministerio de salud informó que el programa se extenderá a todo el país.",
-    },
-    {
-      label: "Noticia falsa",
-      text: "EL GRAN SECRETO QUE LA ÉLITE NO QUIERE QUE SEPAS. Todo el mundo sabe que los poderosos están controlando los medios. La verdad oculta que te están censurando. Sin fuentes verificadas pero MUY IMPORTANTE. ¡¡¡COMPARTE ANTES DE QUE LO BORREN!!! Esta información está siendo silenciada.",
-    },
-  ];
-
   const scrollToAnalyzer = () => {
     analyzerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
@@ -221,27 +206,6 @@ export function HomePage({ onResult, onNavigateTips }: HomePageProps) {
               </div>
             </div>
           ))}
-        </div>
-
-        <div className="mb-8">
-          <h3 className="text-gray-700 dark:text-gray-200 mb-3" style={{ fontSize: "0.95rem", fontWeight: 600 }}>
-            Probar con ejemplos
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {exampleTexts.map((ex) => (
-              <button
-                key={ex.label}
-                onClick={() => {
-                  setInputs((prev) => ({ ...prev, text: ex.text }));
-                  setInputType("text");
-                  setError("");
-                }}
-                className="btn-ghost-soft"
-              >
-                {ex.label}
-              </button>
-            ))}
-          </div>
         </div>
 
         <div className="surface-panel p-5">

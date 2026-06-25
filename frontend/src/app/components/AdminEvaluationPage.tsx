@@ -68,7 +68,13 @@ export function AdminEvaluationPage() {
       const key = sessionStorage.getItem(ADMIN_KEY_STORAGE) ?? adminKey;
       const res = await fetch(`/api/evaluation?key=${encodeURIComponent(key)}`);
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? `HTTP ${res.status}`);
+      if (!res.ok) {
+        if (res.status === 401) {
+          sessionStorage.removeItem(ADMIN_KEY_STORAGE);
+          setUnlocked(false);
+        }
+        throw new Error(data.error ?? `HTTP ${res.status}`);
+      }
       setReport(data);
     } catch (err: any) {
       setError(err?.message ?? "No se pudo ejecutar la evaluación.");
@@ -119,23 +125,28 @@ export function AdminEvaluationPage() {
               Ruta oculta — no visible en el menú público. Versión del prototipo: {report?.prototype_version ?? "0.2.0"}
             </p>
           </div>
-          <button
-            onClick={runEvaluation}
-            disabled={loading}
-            className="btn-primary flex items-center gap-2"
-          >
-            {loading ? (
-              <>
-                <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                Evaluando…
-              </>
-            ) : (
-              <>
-                <Play className="w-4 h-4" />
-                Ejecutar evaluación
-              </>
-            )}
-          </button>
+            <div className="flex gap-2">
+              <button
+                onClick={runEvaluation}
+                disabled={loading}
+                className="btn-primary flex items-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                    Evaluando…
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-4 h-4" />
+                    Ejecutar evaluación
+                  </>
+                )}
+              </button>
+              <button onClick={() => { sessionStorage.removeItem(ADMIN_KEY_STORAGE); setUnlocked(false); }} className="btn-ghost">
+                Cerrar sesión
+              </button>
+            </div>
         </div>
 
         {error && (

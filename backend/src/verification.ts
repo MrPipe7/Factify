@@ -952,10 +952,7 @@ function computeVerdictFromSources(
     (contradictN > 0 || usableSupport.length < 2)
   ) {
     classification = "falso";
-  }
-
-  if (classification === undefined) {
-    if (newsContradict.length >= 1 && newsContradict[0].relevance >= 0.55 && contradictWeight >= supportWeight * 0.85) {
+  } else if (newsContradict.length >= 1 && newsContradict[0].relevance >= 0.55 && contradictWeight >= supportWeight * 0.85) {
     classification = "falso";
   } else if (usableContradict.length >= 2 && usableContradict[0].relevance >= 0.52 && usableContradict[1].relevance >= 0.52 && contradictRatio >= 0.55) {
     classification = "falso";
@@ -987,7 +984,6 @@ function computeVerdictFromSources(
     classification = "falso";
   } else {
     classification = "dudoso";
-  }
   }
 
   const activeCount = supportN + contradictN;
